@@ -8,6 +8,7 @@ import {
   getExplorerUrl,
   getNextPoolId,
 } from './utils';
+import { ConfirmOptions } from '@solana/web3.js';
 
 type CreatePoolArgs = ProgramInteractionArgs & {
   token: {
@@ -20,6 +21,10 @@ type CreatePoolArgs = ProgramInteractionArgs & {
 type TokenTransactionArgs = ProgramInteractionArgs & {
   poolId: number | typeof anchor.BN;
   amount: number;
+};
+
+const signingOptions: ConfirmOptions = {
+  skipPreflight: true,
 };
 
 export const createPool = async (args: CreatePoolArgs) => {
@@ -35,7 +40,7 @@ export const createPool = async (args: CreatePoolArgs) => {
       signer: creator,
       metadata: metadataPDA,
     })
-    .rpc();
+    .rpc(signingOptions);
   console.log('Transaction url:', getExplorerUrl(txn));
   return txn;
 };
@@ -55,7 +60,7 @@ export const buyTokens = async (args: TokenTransactionArgs) => {
       buyer: buyer,
       buyerTokenAccount,
     })
-    .rpc();
+    .rpc(signingOptions);
   console.log('Transaction url:', getExplorerUrl(txn));
   return txn;
 };
@@ -75,7 +80,7 @@ export const sellTokens = async (args: TokenTransactionArgs) => {
       seller,
       sellerTokenAccount,
     })
-    .rpc();
+    .rpc(signingOptions);
   console.log('Transaction url:', getExplorerUrl(txn));
   return txn;
 };
