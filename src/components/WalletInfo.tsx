@@ -22,7 +22,9 @@ const ConnectWalletButton = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Connect</Button>
+        <Button className="self-center" variant="outline">
+          Connect
+        </Button>
       </DialogTrigger>
       <DialogContent className="pt-10">
         <DialogHeader>Connect to a wallet</DialogHeader>
