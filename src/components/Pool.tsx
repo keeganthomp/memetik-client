@@ -28,9 +28,11 @@ const Pool = ({ pool }: Props) => {
       </div>
       <div className="grid grid-rows-1 grid-cols-[5rem_1fr] gap-5 overflow-hidden">
         <TokenImage tokenImage={token.image} size={5} />
-        <div className="flex flex-col gap-1">
-          <p className="text-xl text-ellipsis overflow-hidden">{token.name}</p>
-          <p className="uppercase text-ellipsis overflow-hidden">${token.symbol}</p>
+        <div className="flex flex-col gap-1 justify-center">
+          <p className="text-2xl text-ellipsis overflow-hidden tracking-wide">{token.name}</p>
+          <p className="uppercase tracking-wide text-ellipsis overflow-hidden text-sm font-thin text-gray-700">
+            ${token.symbol}
+          </p>
         </div>
       </div>
       {token.description && <p className="">{token.description}</p>}
