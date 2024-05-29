@@ -23,9 +23,7 @@ type TokenTransactionArgs = ProgramInteractionArgs & {
   amount: number;
 };
 
-const signingOptions: ConfirmOptions = {
-  commitment: 'confirmed',
-};
+const signingOptions: ConfirmOptions = {};
 
 export const createPool = async (args: CreatePoolArgs) => {
   const program = getProgram(args);
