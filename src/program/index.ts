@@ -24,7 +24,7 @@ type TokenTransactionArgs = ProgramInteractionArgs & {
 };
 
 const signingOptions: ConfirmOptions = {
-  skipPreflight: true,
+  commitment: 'confirmed',
 };
 
 export const createPool = async (args: CreatePoolArgs) => {
