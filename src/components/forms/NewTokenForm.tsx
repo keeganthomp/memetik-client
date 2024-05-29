@@ -84,7 +84,11 @@ const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
         ...token,
         uri: metadataUri as string,
       };
-      const transaction = await createPoolTxn({ connection, wallet: anchorWallet, token: tokenPayload });
+      const transaction = await createPoolTxn({
+        connection,
+        wallet: anchorWallet,
+        token: tokenPayload,
+      });
       const signature = await sendTransaction(transaction, connection);
       closeDialog();
       toast({
@@ -203,9 +207,7 @@ const DialogForm = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleFormOpen}>
-      <Button onClick={() => setIsOpen(true)} variant="outline">
-        Launch Token
-      </Button>
+      <Button onClick={() => setIsOpen(true)}>Launch Token</Button>
       <DialogContent className="sm:max-w-[425px]">
         {!connected ? (
           <div className="flex flex-col items-center justify-center space-y-4">

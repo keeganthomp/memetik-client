@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 
 const Header = () => {
   return (
-    <div className="flex justify-end items-center fixed w-full top-0 left-0 px-5 h-10 backdrop-blur-md bg-white/30">
+    <div className="fixed w-full top-0 left-0 px-7 h-14 backdrop-blur-md bg-white/30 flex justify-end">
       <WalletInfo />
     </div>
   );
@@ -12,9 +12,9 @@ const Header = () => {
 
 const AppLayout = () => {
   return (
-    <div className="flex flex-col gap-3 px-5 pb-14">
+    <div className="flex flex-col gap-3 px-5 pb-14 justify-center items-center">
       <Header />
-      <div className="pt-10">
+      <div className="pt-14 w-full md:max-w-[600px]">
         <Outlet />
       </div>
       <Toaster />

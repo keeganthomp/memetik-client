@@ -8,7 +8,7 @@ import { useCallback } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const Pools = () => {
+const HomePage = () => {
   const { data, loading, error, refetch } = useQuery<GetPoolsQuery>(GET_POOLS, {
     notifyOnNetworkStatusChange: true,
   });
@@ -32,30 +32,20 @@ const Pools = () => {
   const pools = (data?.getPools as Pool[]) ?? [];
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex justify-end">
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between">
+        <NewTokenForm />
         <Button onClick={handleRefetch} size="icon" variant="ghost">
           <RefreshCw className="cursor-pointer" size={18} />
         </Button>
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-8">
         {pools.length === 0 ? (
           <p className="text-center">No pools available</p>
         ) : (
           pools.map((pool) => <PoolPreview key={pool.id} pool={pool} />)
         )}
       </div>
-    </div>
-  );
-};
-
-const HomePage = () => {
-  return (
-    <div className="flex flex-col gap-2">
-      <div className="flex justify-center">
-        <NewTokenForm />
-      </div>
-      <Pools />
     </div>
   );
 };
