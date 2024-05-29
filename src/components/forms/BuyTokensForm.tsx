@@ -12,7 +12,7 @@ import {
   FormDescription,
 } from '@/components/ui/form';
 import { useConnection, useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
-import { buyTokens } from '@/program';
+import { buyTokensTxn } from '@/program';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -35,6 +35,7 @@ const BuyTokensForm = ({ closeDialog, pool }: { closeDialog: () => void; pool: P
   const { toast } = useToast();
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
+  const { sendTransaction } = useWallet();
   const [updatePoolFromTxn] = useMutation<UpdatePoolFromTxnMutation>(UPDATE_POOL_FROM_TXN);
 
   const form = useForm<z.infer<typeof buyTokensFormSchema>>({
@@ -52,12 +53,13 @@ const BuyTokensForm = ({ closeDialog, pool }: { closeDialog: () => void; pool: P
     }
     try {
       const atomicAmount = getAtomicAmount(amount);
-      const txn = await buyTokens({
+      const transaction = await buyTokensTxn({
         connection,
         wallet: anchorWallet,
         poolId: pool.id,
         amount: atomicAmount,
       });
+      const signature = await sendTransaction(transaction, connection);
       closeDialog();
       toast({
         title: 'Transaction submitted',
@@ -68,7 +70,7 @@ const BuyTokensForm = ({ closeDialog, pool }: { closeDialog: () => void; pool: P
       console.log('sending to server...');
       updatePoolFromTxn({
         variables: {
-          txn,
+          txn: signature,
         },
       });
     } catch (error) {

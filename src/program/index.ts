@@ -5,10 +5,8 @@ import {
   getNum,
   getMetadataPDA,
   getMintPDA,
-  getExplorerUrl,
   getNextPoolId,
 } from './utils';
-import { ConfirmOptions } from '@solana/web3.js';
 
 type CreatePoolArgs = ProgramInteractionArgs & {
   token: {
@@ -23,27 +21,26 @@ type TokenTransactionArgs = ProgramInteractionArgs & {
   amount: number;
 };
 
-const signingOptions: ConfirmOptions = {};
-
-export const createPool = async (args: CreatePoolArgs) => {
+export const createPoolTxn = async (args: CreatePoolArgs) => {
   const program = getProgram(args);
   const poolId = await getNextPoolId(args);
   const mint = getMintPDA({ ...args, poolId });
   const metadataPDA = getMetadataPDA(mint);
   const creator = args.wallet.publicKey;
-  console.log('Creating pool with id:', poolId);
-  const txn = await program.methods
+  const transaction = await program.methods
     .initialize(new anchor.BN(poolId), args.token)
     .accounts({
       signer: creator,
       metadata: metadataPDA,
     })
-    .rpc(signingOptions);
-  console.log('Transaction url:', getExplorerUrl(txn));
-  return txn;
+    .transaction();
+  const latestBlock = await args.connection.getLatestBlockhash();
+  transaction.feePayer = creator;
+  transaction.recentBlockhash = latestBlock.blockhash;
+  return transaction;
 };
 
-export const buyTokens = async (args: TokenTransactionArgs) => {
+export const buyTokensTxn = async (args: TokenTransactionArgs) => {
   const program = getProgram(args);
   const poolIdNum = getNum(args.poolId);
   const mintPDA = getMintPDA({ ...args, poolId: poolIdNum });
@@ -52,18 +49,20 @@ export const buyTokens = async (args: TokenTransactionArgs) => {
     mint: mintPDA,
     owner: buyer,
   });
-  const txn = await program.methods
+  const transaction = await program.methods
     .buy(new anchor.BN(poolIdNum), new anchor.BN(args.amount))
     .accounts({
       buyer: buyer,
       buyerTokenAccount,
     })
-    .rpc(signingOptions);
-  console.log('Transaction url:', getExplorerUrl(txn));
-  return txn;
+    .transaction();
+  const latestBlock = await args.connection.getLatestBlockhash();
+  transaction.feePayer = buyer;
+  transaction.recentBlockhash = latestBlock.blockhash;
+  return transaction;
 };
 
-export const sellTokens = async (args: TokenTransactionArgs) => {
+export const sellTokensTxn = async (args: TokenTransactionArgs) => {
   const program = getProgram(args);
   const poolIdNum = getNum(args.poolId);
   const mintPDA = getMintPDA({ ...args, poolId: poolIdNum });
@@ -72,13 +71,15 @@ export const sellTokens = async (args: TokenTransactionArgs) => {
     mint: mintPDA,
     owner: seller,
   });
-  const txn = await program.methods
+  const transaction = await program.methods
     .sell(new anchor.BN(poolIdNum), new anchor.BN(args.amount))
     .accounts({
       seller,
       sellerTokenAccount,
     })
-    .rpc(signingOptions);
-  console.log('Transaction url:', getExplorerUrl(txn));
-  return txn;
+    .transaction();
+  const latestBlock = await args.connection.getLatestBlockhash();
+  transaction.feePayer = seller;
+  transaction.recentBlockhash = latestBlock.blockhash;
+  return transaction;
 };

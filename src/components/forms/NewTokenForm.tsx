@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useConnection, useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
-import { createPool } from '@/program';
+import { createPoolTxn } from '@/program';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -43,6 +43,7 @@ const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
   const { toast } = useToast();
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
+  const { sendTransaction } = useWallet();
   const [createPoolFromTxn] = useMutation<CreatePoolFromTxnMutation>(CREATE_POOL_FROM_TXN, {
     refetchQueries: [{ query: GET_POOLS }],
   });
@@ -83,7 +84,8 @@ const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
         ...token,
         uri: metadataUri as string,
       };
-      const txn = await createPool({ connection, wallet: anchorWallet, token: tokenPayload });
+      const transaction = await createPoolTxn({ connection, wallet: anchorWallet, token: tokenPayload });
+      const signature = await sendTransaction(transaction, connection);
       closeDialog();
       toast({
         title: 'Transaction submitted',
@@ -94,7 +96,7 @@ const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
       console.log('submitting txn to server...');
       createPoolFromTxn({
         variables: {
-          txn,
+          txn: signature,
         },
       });
     } catch (error) {

@@ -12,7 +12,7 @@ import {
   FormDescription,
 } from '@/components/ui/form';
 import { useConnection, useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
-import { sellTokens } from '@/program';
+import { sellTokensTxn } from '@/program';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -40,6 +40,7 @@ const SellTokensForm = ({
   const { toast } = useToast();
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
+  const { sendTransaction } = useWallet();
   const [updatePoolFromTxn] = useMutation<UpdatePoolFromTxnMutation>(UPDATE_POOL_FROM_TXN);
 
   const sellTokensFormSchema = z.object({
@@ -64,12 +65,13 @@ const SellTokensForm = ({
     }
     try {
       const atomicAmount = getAtomicAmount(amount);
-      const txn = await sellTokens({
+      const transaction = await sellTokensTxn({
         connection,
         wallet: anchorWallet,
         poolId: pool.id,
         amount: atomicAmount,
       });
+      const signature = await sendTransaction(transaction, connection);
       closeDialog();
       toast({
         title: 'Transaction submitted',
@@ -80,7 +82,7 @@ const SellTokensForm = ({
       console.log('sending to server...');
       updatePoolFromTxn({
         variables: {
-          txn,
+          txn: signature,
         },
       });
     } catch (error) {
