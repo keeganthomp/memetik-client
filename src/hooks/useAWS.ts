@@ -74,7 +74,6 @@ const useAws = (): UseAwsResult => {
         throw new Error('Failed to upload file to S3');
       }
       const assetUrl = getAssetUrl(key);
-      console.log('Uploaded file to:', assetUrl);
       return assetUrl;
     } catch (err: any) {
       setError(err?.message || 'Failed to upload file');

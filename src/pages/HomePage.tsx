@@ -59,8 +59,6 @@ const HomePage = () => {
   }
 
   const hasPoolsToShow = fetchedPools.length > 0 || newPools.length > 0;
-  console.log('fetchedPools', fetchedPools);
-  console.log('newPools', newPools);
 
   return (
     <div className="flex flex-col gap-4">

@@ -8,7 +8,6 @@ import router from './router';
 import { SocketProvider } from './context/SocketContext';
 
 const getWalletEndpoint = () => {
-  console.log('wee', import.meta.env.MODE);
   switch (import.meta.env.MODE) {
     case 'development':
       return clusterApiUrl('devnet');
