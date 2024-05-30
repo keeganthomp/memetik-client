@@ -23,6 +23,7 @@ import { UPDATE_POOL_FROM_TXN } from '@/graphql/mutations';
 import { UpdatePoolFromTxnMutation, Pool } from '@/graphql/__generated__/graphql';
 import { useMutation } from '@apollo/client';
 import useTokenBalance from '@/hooks/useTokenBalance';
+import { useTransaction } from '@/hooks/useTransaction';
 
 type Props = {
   pool: Pool;
@@ -39,6 +40,7 @@ const SellTokensForm = ({
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
   const { sendTransaction } = useWallet();
+  const { showTransactionToast } = useTransaction();
   const { balance: tokenBalance = 0, isFetchingBalance } = useTokenBalance({
     token: pool.token.address,
   });
@@ -74,10 +76,7 @@ const SellTokensForm = ({
       });
       const signature = await sendTransaction(transaction, connection);
       closeDialog();
-      toast({
-        title: 'Transaction submitted',
-        description: 'Your transaction will be finalized shortly.',
-      });
+      showTransactionToast(signature);
       // submit to server to update pool info in db
       // will ultimately emit socket event to update UI
       console.log('sending to server...');

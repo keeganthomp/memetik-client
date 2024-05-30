@@ -4,7 +4,8 @@ import { Toaster } from '@/components/ui/toaster';
 
 const Header = () => {
   return (
-    <div className="fixed w-full top-0 left-0 px-7 h-14 backdrop-blur-md bg-white/30 flex justify-end">
+    <div className="fixed w-full top-0 left-0 px-7 h-14 backdrop-blur-md bg-white/30 flex justify-between items-center">
+      <p className="tracking-wide">DEVNET</p>
       <WalletInfo />
     </div>
   );
