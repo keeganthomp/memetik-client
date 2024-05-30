@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from 'react';
+
 const getRandomPastelColor = () => {
   const r = Math.floor(Math.random() * 127 + 127);
   const g = Math.floor(Math.random() * 127 + 127);
@@ -21,14 +23,19 @@ const TokenImage = ({
   size?: number;
 }) => {
   const sizeString = `${size}rem`;
-  const gradientStyle = {
+
+  // Use useState to store the gradient and generate it only once
+  const [gradientStyle] = useState(() => ({
     background: getRandomPastelGradient(),
     width: sizeString, // equivalent to w-12 in Tailwind CSS
     height: sizeString, // equivalent to h-12 in Tailwind CSS
     borderRadius: '50%', // equivalent to rounded-full in Tailwind CSS
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    objectFit: 'cover' as any, // equivalent to object-cover in Tailwind CSS
-  };
+    objectFit: 'cover' as const, // equivalent to object-cover in Tailwind CSS
+  }));
+
+  useEffect(() => {
+    // No need to update the gradient on re-renders
+  }, []);
 
   return (
     <>

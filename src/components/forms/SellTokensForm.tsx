@@ -31,16 +31,17 @@ type Props = {
 const SellTokensForm = ({
   closeDialog,
   pool,
-  tokenBalance = 0,
 }: {
   closeDialog: () => void;
   pool: Props['pool'];
-  tokenBalance?: number | null;
 }) => {
   const { toast } = useToast();
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
   const { sendTransaction } = useWallet();
+  const { balance: tokenBalance = 0, isFetchingBalance } = useTokenBalance({
+    token: pool.token.address,
+  });
   const [updatePoolFromTxn] = useMutation<UpdatePoolFromTxnMutation>(UPDATE_POOL_FROM_TXN);
 
   const sellTokensFormSchema = z.object({
@@ -88,11 +89,19 @@ const SellTokensForm = ({
     } catch (error) {
       console.error('Error selling tokens:', error);
       toast({
+        variant: 'destructive',
         title: 'Error selling tokens',
         description: 'There was an error selling tokens. Please try again.',
       });
     }
   };
+
+  if (isFetchingBalance)
+    return (
+      <div className="flex justify-center">
+        <Loader />
+      </div>
+    );
 
   return (
     <Form {...form}>
@@ -170,9 +179,6 @@ const SellTokensForm = ({
 
 const DialogForm = ({ pool }: Props) => {
   const { connected } = useWallet();
-  const { balance: tokenBalance, isFetchingBalance } = useTokenBalance({
-    token: pool.token.address,
-  });
   const [isOpen, setIsOpen] = useState(false);
 
   const handleFormOpen = (isOpen: boolean) => {
@@ -194,20 +200,12 @@ const DialogForm = ({ pool }: Props) => {
             <p className="text-center">Please connect your wallet to sell tokens.</p>
             <Button onClick={() => setIsOpen(false)}>Close</Button>
           </div>
-        ) : isFetchingBalance ? (
-          <div className="flex justify-center">
-            <Loader />
-          </div>
         ) : (
           <>
             <DialogHeader>
               <DialogTitle>Sell ${pool.token.symbol}</DialogTitle>
             </DialogHeader>
-            <SellTokensForm
-              pool={pool}
-              closeDialog={() => setIsOpen(false)}
-              tokenBalance={tokenBalance}
-            />
+            <SellTokensForm pool={pool} closeDialog={() => setIsOpen(false)} />
           </>
         )}
       </DialogContent>

@@ -5,6 +5,7 @@ import { RouterProvider } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
 import apolloClient from './lib/apolloClient';
 import router from './router';
+import { SocketProvider } from './context/SocketContext';
 
 const getWalletEndpoint = () => {
   console.log('wee', import.meta.env.MODE);
@@ -24,7 +25,9 @@ function App() {
     <ApolloProvider client={apolloClient}>
       <ConnectionProvider endpoint={getWalletEndpoint()}>
         <WalletProvider autoConnect wallets={wallets}>
-          <RouterProvider router={router} />
+          <SocketProvider>
+            <RouterProvider router={router} />
+          </SocketProvider>
         </WalletProvider>
       </ConnectionProvider>
     </ApolloProvider>

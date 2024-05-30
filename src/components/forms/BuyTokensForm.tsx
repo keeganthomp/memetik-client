@@ -22,6 +22,7 @@ import { getAtomicAmount } from '@/program/utils';
 import { UPDATE_POOL_FROM_TXN } from '@/graphql/mutations';
 import { UpdatePoolFromTxnMutation, Pool } from '@/graphql/__generated__/graphql';
 import { useMutation } from '@apollo/client';
+import { useTransaction } from '@/hooks/useTransaction';
 
 type Props = {
   pool: Pool;
@@ -32,6 +33,7 @@ const buyTokensFormSchema = z.object({
 });
 
 const BuyTokensForm = ({ closeDialog, pool }: { closeDialog: () => void; pool: Props['pool'] }) => {
+  const { showTransactionToast } = useTransaction();
   const { toast } = useToast();
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
@@ -61,10 +63,7 @@ const BuyTokensForm = ({ closeDialog, pool }: { closeDialog: () => void; pool: P
       });
       const signature = await sendTransaction(transaction, connection);
       closeDialog();
-      toast({
-        title: 'Transaction submitted',
-        description: 'Your transaction will be finalized shortly.',
-      });
+      showTransactionToast(signature);
       // submit to server to update pool info in db
       // will ultimately emit socket event to update UI
       console.log('sending to server...');
@@ -76,6 +75,7 @@ const BuyTokensForm = ({ closeDialog, pool }: { closeDialog: () => void; pool: P
     } catch (error) {
       console.error('Error buying tokens:', error);
       toast({
+        variant: 'destructive',
         title: 'Error buying tokens',
         description: 'There was an error buying tokens. Please try again.',
       });

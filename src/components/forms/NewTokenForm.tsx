@@ -29,6 +29,7 @@ import { GET_POOLS } from '@/graphql/queries';
 import { CreatePoolFromTxnMutation } from '@/graphql/__generated__/graphql';
 import useAws from '@/hooks/useAWS';
 import { getNextPoolId, getMintPDA } from '@/program/utils';
+import { useTransaction } from '@/hooks/useTransaction';
 
 const tokenFormSchema = z.object({
   name: z.string().min(1).max(50),
@@ -39,6 +40,7 @@ const tokenFormSchema = z.object({
 });
 
 const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
+  const { showTransactionToast } = useTransaction();
   const { uploadTokenImage, uploadTokenMetadata } = useAws();
   const { toast } = useToast();
   const { connection } = useConnection();
@@ -91,10 +93,7 @@ const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
       });
       const signature = await sendTransaction(transaction, connection);
       closeDialog();
-      toast({
-        title: 'Transaction submitted',
-        description: 'Your transaction will be finalized shortly.',
-      });
+      showTransactionToast(signature);
       // submit to server to save in db
       // will ultimately emit socket event to update UI
       console.log('submitting txn to server...');
@@ -106,6 +105,7 @@ const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
     } catch (error) {
       console.error(error);
       toast({
+        variant: 'destructive',
         title: 'Error',
         description: 'An error occurred while creating your token.',
       });
@@ -183,6 +183,7 @@ const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
             type="file"
             accept="image/*"
             onChange={handleImageChange}
+            disabled={form.formState.isSubmitting}
           />
         </div>
         <Button

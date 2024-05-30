@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import * as anchor from '@coral-xyz/anchor';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -13,7 +14,7 @@ export const formatAddress = (address: string) => {
 
 export const checkIfValidTokenImageType = (type: string): boolean => {
   return type === 'image/png' || type === 'image/jpeg';
-}
+};
 
 // https://developers.metaplex.com/token-metadata/token-standard - for fungible assets
 export const checkIfValidTokenMetadata = (metadata: Record<string, string>): boolean => {
@@ -52,4 +53,26 @@ export const checkIfValidTokenMetadata = (metadata: Record<string, string>): boo
     }
   }
   return isValid;
+};
+
+export const waitForTxnFinalization = async (
+  connection: anchor.web3.Connection,
+  signature: anchor.web3.TransactionSignature
+) => {
+  const RETRY_INTERVAL = 1500;
+  let isFinalized = false;
+  while (!isFinalized) {
+    console.log('Checking transaction status...');
+    const { value } = await connection.getSignatureStatus(signature, {
+      searchTransactionHistory: true,
+    });
+    if (value?.err) {
+      throw new Error(`Transaction confirmation failed: ${JSON.stringify(value?.err)}`);
+    }
+    isFinalized = value?.confirmationStatus === 'finalized';
+    if (!isFinalized) {
+      await new Promise((resolve) => setTimeout(resolve, RETRY_INTERVAL));
+    }
+  }
+  console.log('Transaction finalized');
 };

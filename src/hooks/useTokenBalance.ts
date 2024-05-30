@@ -37,9 +37,9 @@ const useTokenBalance = ({ token }: UseTokenBalanceProps) => {
       const errorMesage = error?.message || 'Unable to fetch token balance';
       setErrorFetchingBalance(errorMesage);
       toast({
+        variant: 'destructive',
         title: 'Error fetching balance',
         description: errorMesage,
-        duration: 5000,
       });
       console.error('Error fetching balance', error);
     } finally {
