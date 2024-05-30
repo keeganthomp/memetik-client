@@ -25,7 +25,6 @@ import { Loader } from '@/components/ui/loader';
 import { useToast } from '@/components/ui/use-toast';
 import { useMutation } from '@apollo/client';
 import { CREATE_POOL_FROM_TXN } from '@/graphql/mutations';
-import { GET_POOLS } from '@/graphql/queries';
 import { CreatePoolFromTxnMutation } from '@/graphql/__generated__/graphql';
 import useAws from '@/hooks/useAWS';
 import { getNextPoolId, getMintPDA } from '@/program/utils';
@@ -46,9 +45,7 @@ const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
   const { sendTransaction } = useWallet();
-  const [createPoolFromTxn] = useMutation<CreatePoolFromTxnMutation>(CREATE_POOL_FROM_TXN, {
-    refetchQueries: [{ query: GET_POOLS }],
-  });
+  const [createPoolFromTxn] = useMutation<CreatePoolFromTxnMutation>(CREATE_POOL_FROM_TXN);
 
   const form = useForm<z.infer<typeof tokenFormSchema>>({
     resolver: zodResolver(tokenFormSchema),
@@ -136,7 +133,8 @@ const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
                   {...field}
                   disabled={form.formState.isSubmitting}
                   onChange={(e) => {
-                    const newValue = e.target.value.trim(); // remove leading/trailing whitespace
+                    // maybe do some validating of some sort on name - currently wahtever is entered is accepted
+                    const newValue = e.target.value;
                     field.onChange(newValue);
                   }}
                 />

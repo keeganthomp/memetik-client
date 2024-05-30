@@ -21,6 +21,7 @@
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/web3.js": "^1.91.8",
     "class-variance-authority": "^0.7.0",
+    "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "graphql": "^16.8.1",
     "lucide-react": "^0.379.0",

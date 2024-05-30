@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import NewTokenForm from '@/components/forms/NewTokenForm';
 import { GET_POOLS } from '@/graphql/queries';
 import { useQuery } from '@apollo/client';
@@ -7,61 +7,46 @@ import { Loader } from '@/components/ui/loader';
 import PoolPreview from '@/components/Pool';
 import { RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useSocket, SocketEvent } from '@/hooks/useSocket';
+import useSocketEvent from '@/hooks/useSocketEvent';
 
 const HomePage = () => {
-  const socket = useSocket();
-  const { data, loading, error, updateQuery, refetch } = useQuery<GetPoolsQuery>(GET_POOLS, {
-    notifyOnNetworkStatusChange: true,
+  const [newPools, setNewPools] = useState<Pool[]>([]);
+  const [isRefresing, setIsRefreshing] = useState(false);
+  const { data, loading, error, refetch } = useQuery<GetPoolsQuery>(GET_POOLS, {
+    fetchPolicy: 'network-only',
+    onCompleted: () => {
+      setNewPools([]);
+    }
   });
-  const newPoolAddressRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    if (newPoolAddressRef.current) {
-      setTimeout(() => {
-        newPoolAddressRef.current = null;
-      }, 300); // Match the animation duration in css
+  const fetchedPools = useMemo(() => {
+    const pools = data?.getPools as Pool[] || [];
+    return pools.filter((pool) => !newPools.some((newPool) => newPool.address === pool.address));
+  }, [data]);
+
+  const handleNewPoolCreated = useCallback((newPoolFromDb: Pool) => {
+    const isPoolAlreadyFetched = data?.getPools?.some(
+      (pool) => (pool as PoolFragment)?.address === newPoolFromDb.address
+    );
+    const isNewPoolAlreadyAdded = newPools.some(
+      (pool) => (pool as PoolFragment)?.address === newPoolFromDb.address
+    );
+    const isAlreadyAccountedFor = isPoolAlreadyFetched || isNewPoolAlreadyAdded;
+    if (!isAlreadyAccountedFor) {
+      setNewPools((prev) => [newPoolFromDb, ...prev]);
     }
-  }, [newPoolAddressRef.current]);
+  }, []);
+  // Listen for the POOL_CREATED event using the custom hook
+  useSocketEvent('POOL_CREATED', handleNewPoolCreated);
 
-  // Listen for new pools to be added to the list
-  useEffect(() => {
-    if (socket) {
-      console.log('Listening for new pools...');
-      socket.on(SocketEvent.POOL_CREATED, (newPoolFromDb) => {
-        updateQuery((prevData) => {
-          if (!prevData || !newPoolFromDb) return prevData;
-          // Check if the pool is already in the UI
-          const isPoolInList = prevData.getPools.some(
-            (pool) => (pool as PoolFragment)?.address === newPoolFromDb?.address
-          );
-          if (isPoolInList) return prevData;
-          const newPoolForCache = {
-            __typename: 'Pool',
-            ...newPoolFromDb,
-            token: {
-              __typename: 'Token',
-              ...newPoolFromDb.token,
-            },
-          };
-          newPoolAddressRef.current = newPoolFromDb?.address;
-          return {
-            ...prevData,
-            getPools: [newPoolForCache, ...prevData.getPools],
-          };
-        });
-      });
-      return () => {
-        socket.off(SocketEvent.POOL_CREATED);
-      };
-    }
-  }, [socket]);
-
-  const handleRefetch = useCallback(() => {
-    refetch();
+  const handleRefetch = useCallback(async () => {
+    setIsRefreshing(true);
+    setNewPools([]);
+    await refetch();
+    setIsRefreshing(false);
   }, [refetch]);
 
-  if (loading) {
+  if (loading || isRefresing) {
     return (
       <div className="flex justify-center items-center pt-3">
         <Loader />
@@ -73,7 +58,9 @@ const HomePage = () => {
     return <p className="text-red-500 text-center pt-3">Error fetching pools</p>;
   }
 
-  const pools = (data?.getPools as Pool[]) ?? [];
+  const hasPoolsToShow = fetchedPools.length > 0 || newPools.length > 0;
+  console.log('fetchedPools', fetchedPools);
+  console.log('newPools', newPools);
 
   return (
     <div className="flex flex-col gap-4">
@@ -83,18 +70,18 @@ const HomePage = () => {
           <RefreshCw className="cursor-pointer" size={18} />
         </Button>
       </div>
-      <div className="flex flex-col gap-8 list-container">
-        {pools.length === 0 ? (
+      <div className="flex flex-col gap-8">
+        {!hasPoolsToShow ? (
           <p className="text-center">No pools available</p>
         ) : (
-          pools.map((pool) => (
-            <div
-              key={pool.address}
-              className={`${pool?.address === newPoolAddressRef?.current ? 'new-item' : ''}`}
-            >
-              <PoolPreview pool={pool} />
-            </div>
-          ))
+          <>
+            {newPools.map((pool, i) => (
+              <PoolPreview key={pool?.address} pool={pool} isNew={i === 0} />
+            ))}
+            {fetchedPools.map((pool) => (
+              <PoolPreview key={pool?.address} pool={pool} />
+            ))}
+          </>
         )}
       </div>
     </div>

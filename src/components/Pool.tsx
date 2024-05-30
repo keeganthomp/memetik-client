@@ -7,9 +7,11 @@ import moment from 'moment';
 import { formatAddress } from '@/lib/utils';
 import TokenImage from './TokenImage';
 import { SquareArrowOutUpRightIcon } from 'lucide-react';
+import classnames from 'classnames';
 
 type Props = {
   pool: PoolT;
+  isNew?: boolean;
 };
 
 const Link = ({ href, text }: { href: string; text: string }) => (
@@ -18,10 +20,14 @@ const Link = ({ href, text }: { href: string; text: string }) => (
   </a>
 );
 
-const Pool = ({ pool }: Props) => {
+const Pool = ({ pool, isNew }: Props) => {
   const { token } = pool;
   return (
-    <div className="rounded-xl p-5 bg-white flex flex-col gap-5 font-light">
+    <div
+      className={classnames('rounded-xl p-5 bg-white flex flex-col gap-5 font-light', {
+        'new-item': isNew,
+      })}
+    >
       <div className="flex justify-between text-gray-400 font-thin text-sm">
         <Link href={getExplorerUrl(pool.address, 'address')} text={formatAddress(pool.address)} />
         <p>{moment(pool.createdAt).fromNow()}</p>

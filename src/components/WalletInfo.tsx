@@ -30,7 +30,7 @@ const ConnectWalletButton = () => {
         <DialogHeader className="text-center text-gray-900">Select a wallet</DialogHeader>
         <div className="flex flex-col gap-2">
           {wallets.length === 0 ? (
-            <p className="text-center text-gray-800">No avaiable wallets on device</p>
+            <p className="text-center text-gray-800">No wallets available</p>
           ) : (
             wallets.map((wallet) => <WalletOption key={wallet.adapter.name} wallet={wallet} />)
           )}
