@@ -11,7 +11,7 @@ const WalletOption = ({ wallet }: { wallet: Wallet }) => {
     select(wallet.adapter.name);
   };
   return (
-    <Button variant="outline" onClick={handleSelectWallet}>
+    <Button variant="ghost" className="bg-gray-50" onClick={handleSelectWallet}>
       {wallet.adapter.name}
     </Button>
   );
@@ -26,11 +26,13 @@ const ConnectWalletButton = () => {
           Connect
         </Button>
       </DialogTrigger>
-      <DialogContent className="pt-10">
-        <DialogHeader>Connect to a wallet</DialogHeader>
-        {wallets.map((wallet) => (
-          <WalletOption key={wallet.adapter.name} wallet={wallet} />
-        ))}
+      <DialogContent className="pt-6 max-w-[95%] rounded md:max-w-[425px]">
+        <DialogHeader className="text-center text-gray-800">Select a wallet</DialogHeader>
+        <div className="flex flex-col gap-2">
+          {wallets.map((wallet) => (
+            <WalletOption key={wallet.adapter.name} wallet={wallet} />
+          ))}
+        </div>
       </DialogContent>
     </Dialog>
   );
@@ -48,11 +50,13 @@ const WalletInfo = ({ className = '' }: { className?: string }) => {
           <CiWallet size={24} />
         </div>
       </DialogTrigger>
-      <DialogContent>
-        <h2 className="font-light text-center">
+      <DialogContent className="max-w-[95%] rounded md:max-w-[350px]">
+        <h2 className="font-light text-center pt-3">
           Currently connected with <span className="font-normal">{formattedAddress}</span>
         </h2>
-        <Button onClick={disconnect}>Disconnect</Button>
+        <Button className="bg-red-400 hover:bg-red-500" onClick={disconnect}>
+          Disconnect
+        </Button>
       </DialogContent>
     </Dialog>
   );
