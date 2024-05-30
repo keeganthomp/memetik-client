@@ -27,11 +27,13 @@ const ConnectWalletButton = () => {
         </Button>
       </DialogTrigger>
       <DialogContent className="pt-6 max-w-[95%] rounded md:max-w-[425px]">
-        <DialogHeader className="text-center text-gray-800">Select a wallet</DialogHeader>
+        <DialogHeader className="text-center text-gray-900">Select a wallet</DialogHeader>
         <div className="flex flex-col gap-2">
-          {wallets.map((wallet) => (
-            <WalletOption key={wallet.adapter.name} wallet={wallet} />
-          ))}
+          {wallets.length === 0 ? (
+            <p className="text-center text-gray-900 font-thin">No avaiable wallets on device</p>
+          ) : (
+            wallets.map((wallet) => <WalletOption key={wallet.adapter.name} wallet={wallet} />)
+          )}
         </div>
       </DialogContent>
     </Dialog>
