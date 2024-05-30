@@ -136,7 +136,7 @@ const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
                   {...field}
                   disabled={form.formState.isSubmitting}
                   onChange={(e) => {
-                    const newValue = e.target.value.replace(/\s/g, ''); // Convert to uppercase and remove spaces
+                    const newValue = e.target.value.trim(); // remove leading/trailing whitespace
                     field.onChange(newValue);
                   }}
                 />
@@ -166,7 +166,7 @@ const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
                     placeholder="WIFHAT"
                     disabled={form.formState.isSubmitting}
                     onChange={(e) => {
-                      const newValue = e.target.value.toUpperCase().replace(/\s/g, ''); // Convert to uppercase and remove spaces
+                      const newValue = e.target.value.trim().toUpperCase().replace(/\s/g, ''); // Convert to uppercase and remove spaces
                       field.onChange(newValue);
                     }}
                   />

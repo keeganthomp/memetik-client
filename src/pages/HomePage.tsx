@@ -20,7 +20,7 @@ const HomePage = () => {
     if (newPoolAddressRef.current) {
       setTimeout(() => {
         newPoolAddressRef.current = null;
-      }, 500); // Match the animation duration
+      }, 300); // Match the animation duration in css
     }
   }, [newPoolAddressRef.current]);
 
@@ -77,7 +77,7 @@ const HomePage = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-between">
+      <div className="flex justify-between z-10">
         <NewTokenForm />
         <Button onClick={handleRefetch} size="icon" variant="ghost">
           <RefreshCw className="cursor-pointer" size={18} />
