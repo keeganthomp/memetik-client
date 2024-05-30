@@ -162,7 +162,7 @@ const DialogForm = ({ pool }: Props) => {
       >
         Buy
       </Button>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-[95%] rounded md:max-w-[425px]">
         {!connected ? (
           <div className="flex flex-col items-center justify-center space-y-4">
             <p className="text-center">Please connect your wallet to purchase tokens.</p>

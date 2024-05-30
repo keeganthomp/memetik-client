@@ -209,7 +209,7 @@ const DialogForm = () => {
   return (
     <Dialog open={isOpen} onOpenChange={handleFormOpen}>
       <Button onClick={() => setIsOpen(true)}>Launch Token</Button>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="max-w-[95%] rounded md:max-w-[425px]">
         {!connected ? (
           <div className="flex flex-col items-center justify-center space-y-4">
             <p className="text-center">Please connect your wallet to create new token.</p>
