@@ -189,7 +189,7 @@ const DialogForm = ({ pool }: Props) => {
       <Button
         onClick={() => setIsOpen(true)}
         variant="outline"
-        className="bg-red-500 hover:bg-red-600 text-white hover:text-white w-full"
+        className="bg-red-400 hover:bg-red-500 text-white hover:text-white w-full rounded-lg"
       >
         Sell
       </Button>

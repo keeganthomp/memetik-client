@@ -206,7 +206,9 @@ const DialogForm = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleFormOpen}>
-      <Button onClick={() => setIsOpen(true)}>Launch Token</Button>
+      <Button className="w-full rounded-lg" onClick={() => setIsOpen(true)}>
+        Launch Token
+      </Button>
       <DialogContent className="max-w-[95%] rounded md:max-w-[425px]">
         {!connected ? (
           <div className="flex flex-col items-center justify-center space-y-4">

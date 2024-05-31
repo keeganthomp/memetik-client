@@ -1,21 +1,35 @@
 import { createBrowserRouter } from 'react-router-dom';
 // Layouts
-import AppLayout from './Layout';
+import SidebarLayout, { NoSidebarLayout } from './Layout';
 // Pages
 import ErrorPage from './pages/ErrorPage';
-import HomePage from './pages/HomePage';
+import PoolsPage from './pages/PoolsPage';
+import PoolPage from './pages/PoolPage';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <AppLayout />,
-    errorElement: <ErrorPage />,
+    element: <SidebarLayout />,
     children: [
       {
         index: true,
-        element: <HomePage />,
+        element: <PoolsPage />,
       },
     ],
+  },
+  {
+    path: '/pool',
+    element: <NoSidebarLayout />,
+    children: [
+      {
+        path: ':poolId',
+        element: <PoolPage />,
+      },
+    ],
+  },
+  {
+    path: '*',
+    element: <ErrorPage />,
   },
 ]);
 export default router;

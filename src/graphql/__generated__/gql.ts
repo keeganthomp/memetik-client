@@ -18,7 +18,9 @@ const documents = {
     "\n  mutation createPoolFromTxn($txn: String!) {\n    createPoolFromTxn(txn: $txn) {\n      ...Pool\n    }\n  }\n  \n": types.CreatePoolFromTxnDocument,
     "\n  mutation updatePoolFromTxn($txn: String!) {\n    updatePoolFromTxn(txn: $txn) {\n      ...Pool\n    }\n  }\n  \n": types.UpdatePoolFromTxnDocument,
     "\n  query getPools {\n    getPools {\n      ...Pool\n    }\n  }\n  \n": types.GetPoolsDocument,
-    "\n  query getTokenMetaPresignedUrl($mintAddress: String!, $fileType: String!, $assetType: FileUploadType!) {\n    getTokenMetaPresignedUrl(\n      mintAddress: $mintAddress\n      fileType: $fileType\n      assetType: $assetType\n    ) {\n      key\n      url\n    }\n  }\n": types.GetTokenMetaPresignedUrlDocument,
+    "\n  query getTokenMetaPresignedUrl(\n    $mintAddress: String!\n    $fileType: String!\n    $assetType: FileUploadType!\n  ) {\n    getTokenMetaPresignedUrl(\n      mintAddress: $mintAddress\n      fileType: $fileType\n      assetType: $assetType\n    ) {\n      key\n      url\n    }\n  }\n": types.GetTokenMetaPresignedUrlDocument,
+    "\n  query getPool($address: String, $id: Int) {\n    getPool(address: $address, id: $id) {\n      ...Pool\n    }\n  }\n  \n": types.GetPoolDocument,
+    "\n  query getPoolByToken($contractAddress: String!) {\n    getPoolByToken(contractAddress: $contractAddress) {\n      ...Pool\n    }\n  }\n  \n": types.GetPoolByTokenDocument,
 };
 
 /**
@@ -58,7 +60,15 @@ export function gql(source: "\n  query getPools {\n    getPools {\n      ...Pool
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query getTokenMetaPresignedUrl($mintAddress: String!, $fileType: String!, $assetType: FileUploadType!) {\n    getTokenMetaPresignedUrl(\n      mintAddress: $mintAddress\n      fileType: $fileType\n      assetType: $assetType\n    ) {\n      key\n      url\n    }\n  }\n"): (typeof documents)["\n  query getTokenMetaPresignedUrl($mintAddress: String!, $fileType: String!, $assetType: FileUploadType!) {\n    getTokenMetaPresignedUrl(\n      mintAddress: $mintAddress\n      fileType: $fileType\n      assetType: $assetType\n    ) {\n      key\n      url\n    }\n  }\n"];
+export function gql(source: "\n  query getTokenMetaPresignedUrl(\n    $mintAddress: String!\n    $fileType: String!\n    $assetType: FileUploadType!\n  ) {\n    getTokenMetaPresignedUrl(\n      mintAddress: $mintAddress\n      fileType: $fileType\n      assetType: $assetType\n    ) {\n      key\n      url\n    }\n  }\n"): (typeof documents)["\n  query getTokenMetaPresignedUrl(\n    $mintAddress: String!\n    $fileType: String!\n    $assetType: FileUploadType!\n  ) {\n    getTokenMetaPresignedUrl(\n      mintAddress: $mintAddress\n      fileType: $fileType\n      assetType: $assetType\n    ) {\n      key\n      url\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query getPool($address: String, $id: Int) {\n    getPool(address: $address, id: $id) {\n      ...Pool\n    }\n  }\n  \n"): (typeof documents)["\n  query getPool($address: String, $id: Int) {\n    getPool(address: $address, id: $id) {\n      ...Pool\n    }\n  }\n  \n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query getPoolByToken($contractAddress: String!) {\n    getPoolByToken(contractAddress: $contractAddress) {\n      ...Pool\n    }\n  }\n  \n"): (typeof documents)["\n  query getPoolByToken($contractAddress: String!) {\n    getPoolByToken(contractAddress: $contractAddress) {\n      ...Pool\n    }\n  }\n  \n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

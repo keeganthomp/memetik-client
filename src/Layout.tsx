@@ -1,26 +1,50 @@
 import { Outlet } from 'react-router-dom';
 import WalletInfo from './components/WalletInfo';
 import { Toaster } from '@/components/ui/toaster';
+import NewPoolForm from '@/components/forms/NewPoolForm';
 
 const Header = () => {
   return (
-    <div className="fixed w-full top-0 left-0 px-3 md:px-7 h-14 backdrop-blur-md bg-white/30 flex justify-between items-center">
-      <p className="tracking-wide">DEVNET</p>
+    <div className="w-full h-full backdrop-blur-md bg-white/30 flex justify-between items-center">
+      <p className="tracking-wide font-light">Memetik</p>
       <WalletInfo />
     </div>
   );
 };
 
-const AppLayout = () => {
+const LeftSideBar = () => {
   return (
-    <div className="flex flex-col gap-3 px-3 md:px-5 pb-14 justify-center items-center">
-      <Header />
-      <div className="pt-14 w-full md:max-w-[600px]">
-        <Outlet />
-      </div>
-      <Toaster />
+    <div className="pt-3">
+      <NewPoolForm />
     </div>
   );
 };
 
-export default AppLayout;
+const SidebarLayout = () => {
+  return (
+    <div className="w-full">
+      <div className="w-full md:w-2/3 grid grid-rows-[40px_1fr] px-3 md:px-5 pb-14 h-screen overflow-hidden mx-auto gap-0">
+        <Header />
+        <div className="grid grid-cols-1 md:grid-cols-[10rem_1fr] gap-5">
+          <LeftSideBar />
+          <Outlet />
+        </div>
+        <Toaster />
+      </div>
+    </div>
+  );
+};
+
+export const NoSidebarLayout = () => {
+  return (
+    <div className="w-full">
+      <div className="w-full md:w-2/3 grid grid-rows-[40px_1fr] px-3 md:px-5 pb-14 h-screen overflow-hidden mx-auto gap-0">
+        <Header />
+        <Outlet />
+        <Toaster />
+      </div>
+    </div>
+  );
+};
+
+export default SidebarLayout;

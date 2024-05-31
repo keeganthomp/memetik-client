@@ -22,7 +22,7 @@ const ConnectWalletButton = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="self-center" variant="outline">
+        <Button className="self-center font-light" variant="outline">
           Connect
         </Button>
       </DialogTrigger>
@@ -48,7 +48,7 @@ const WalletInfo = ({ className = '' }: { className?: string }) => {
     <Dialog>
       <DialogTrigger asChild>
         <div className={cn('flex items-center cursor-pointer hover:underline', className)}>
-          <span className="mr-2 text-sm">{formattedAddress}</span>
+          <span className="mr-2 text-sm font-light">{formattedAddress}</span>
           <CiWallet size={24} />
         </div>
       </DialogTrigger>

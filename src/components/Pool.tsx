@@ -24,7 +24,7 @@ const Pool = ({ pool, isNew }: Props) => {
   const { token } = pool;
   return (
     <div
-      className={classnames('rounded-xl p-5 bg-white flex flex-col gap-5 font-light', {
+      className={classnames('rounded-xl p-5 bg-white flex flex-col gap-4 font-light', {
         'new-item': isNew,
       })}
     >
@@ -50,6 +50,10 @@ const Pool = ({ pool, isNew }: Props) => {
           </p>
         </div>
         <div className="flex justify-between border-b border-gray-100 py-2 items-center uppercase text-xs font-normal">
+          <p>Supply</p>
+          <p>{getUnitAmount(token.supply)}</p>
+        </div>
+        <div className="flex justify-between border-b border-gray-100 py-2 items-center uppercase text-xs font-normal">
           <p>Contract Address</p>
           <a
             className="pl-1 flex items-center hover:underline"
@@ -60,9 +64,16 @@ const Pool = ({ pool, isNew }: Props) => {
             <SquareArrowOutUpRightIcon size={12} className="ml-1" />
           </a>
         </div>
-        <div className="flex justify-between py-2 items-center uppercase text-xs font-normal">
-          <p>Supply</p>
-          <p>{getUnitAmount(token.supply)}</p>
+        <div className="flex justify-between py-2 items-baseline uppercase text-xs font-normal">
+          <p>Creator</p>
+          <a
+            className="pl-1 flex items-center hover:underline"
+            href={getExplorerUrl(pool.creator, 'address')}
+            target="_blank"
+          >
+            {formatAddress(pool.creator)}
+            <SquareArrowOutUpRightIcon size={12} className="ml-1" />
+          </a>
         </div>
       </div>
       <div className="flex justify-between gap-7">
