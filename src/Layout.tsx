@@ -5,7 +5,7 @@ import NewPoolForm from '@/components/forms/NewPoolForm';
 
 const Header = () => {
   return (
-    <div className="w-full h-full backdrop-blur-md bg-white/30 flex justify-between items-center">
+    <div className="w-full h-full backdrop-blur-md bg-white/30 flex justify-between items-center z-10">
       <p className="tracking-wide font-light">Memetik</p>
       <WalletInfo />
     </div>
