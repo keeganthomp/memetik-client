@@ -10,6 +10,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <SidebarLayout />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
@@ -20,16 +21,13 @@ const router = createBrowserRouter([
   {
     path: '/pool',
     element: <NoSidebarLayout />,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: ':poolId',
         element: <PoolPage />,
       },
     ],
-  },
-  {
-    path: '*',
-    element: <ErrorPage />,
   },
 ]);
 export default router;
