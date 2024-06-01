@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { POOL } from './fragments';
+import { POOL, COMMENT } from './fragments';
 
 export const CREATE_POOL_FROM_TXN = gql`
   mutation createPoolFromTxn($txn: String!) {
@@ -17,4 +17,13 @@ export const UPDATE_POOL_FROM_TXN = gql`
     }
   }
   ${POOL}
+`;
+
+export const ADD_COMMENT = gql`
+  mutation addComment($poolId: Int!, $text: String!, $creator: String!) {
+    addComment(poolId: $poolId, text: $text, creator: $creator) {
+      ...Comment
+    }
+  }
+  ${COMMENT}
 `;

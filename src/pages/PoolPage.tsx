@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { GET_POOL } from '@/graphql/queries';
-import { GetPoolQuery, Pool as PoolT } from '@/graphql/__generated__/graphql';
+import { GetPoolQuery, Pool as PoolT, Comment as CommentT } from '@/graphql/__generated__/graphql';
 import { Loader } from '@/components/ui/loader';
 import { getExplorerUrl } from '@/program/utils';
 import BuyTokensForm from '@/components/forms/BuyTokensForm';
@@ -15,19 +15,31 @@ import TokenImage from '@/components/TokenImage';
 import useTokenBalance from '@/hooks/useTokenBalance';
 import { useTransaction } from '@/hooks/useTransaction';
 import { useWallet } from '@solana/wallet-adapter-react';
+import AddCommentForm from '@/components/forms/AddCommentForm';
+import moment from 'moment';
 
 const BackButton = () => {
   const navigate = useNavigate();
-
   const goToPools = () => {
     navigate('/');
   };
-
   return (
     <Button variant="ghost" className="px-2" onClick={goToPools}>
       <ArrowLeft size={16} className="mr-1" />
       Pools
     </Button>
+  );
+};
+
+const Comment = ({ comment }: { comment: CommentT }) => {
+  return (
+    <div className="pb-3 flex flex-col gap-1">
+      <div className="flex justify-between items-center text-xs text-gray-400 font-thin">
+        <p className="text-gray-700">{formatAddress(comment.creator)}</p>
+        <p>{moment(comment.createdAt).fromNow()}</p>
+      </div>
+      <p className="font-light text-sm">{comment.text}</p>
+    </div>
   );
 };
 
@@ -60,14 +72,15 @@ const PoolPage = () => {
   const canSell = !isFetchingBalance && (balance || 0) > 0;
 
   return (
-    <div className="pt-0 md:pt-3">
+    <div className="pt-0 md:pt-3 h-screen overflow-y-auto pb-36 md:pb-20">
       <div className="pb-2 pt-3 md:pt-0">
         <BackButton />
       </div>
       {!pool ? (
         <p>Pool not found</p>
       ) : (
-        <div className="flex flex-col gap-4 ">
+        <div className="flex flex-col gap-3">
+          {/* Token overview */}
           <div className="grid grid-rows-1 grid-cols-[5rem_1fr] gap-5 overflow-hidden">
             <TokenImage tokenImage={token.image} size={5} />
             <div className="flex flex-col justify-center">
@@ -82,6 +95,38 @@ const PoolPage = () => {
               </div>
             </div>
           </div>
+          {/* Buy/Sell buttons */}
+          {isFetchingBalance ? (
+            <div className="flex justify-center w-full pt-5">
+              <Loader />
+            </div>
+          ) : (
+            <div className="pt-1">
+              {connected && (
+                <div className="flex justify-end text-xs font-light text-gray-400 px-3 pb-1">
+                  <p>
+                    Current balance: {balance || 0} ${pool.token.symbol}
+                  </p>
+                </div>
+              )}
+              <div className="flex justify-between gap-7">
+                <BuyTokensForm
+                  pool={pool}
+                  onSubmit={refetchBalance}
+                  disabled={!!processingTransaction}
+                />
+                {canSell && (
+                  <SellTokensForm
+                    pool={pool}
+                    tokenBalance={balance}
+                    onSubmit={refetchBalance}
+                    disabled={!!processingTransaction}
+                  />
+                )}
+              </div>
+            </div>
+          )}
+          {/* Info about token */}
           {token.description && <p className="">{token.description}</p>}
           <div className="text-gray-500">
             <div className="flex justify-between border-b border-gray-100 py-2 items-center uppercase text-xs font-normal">
@@ -119,38 +164,17 @@ const PoolPage = () => {
               </a>
             </div>
           </div>
-          {isFetchingBalance ? (
-            <div className="flex justify-center w-full pt-5">
-              <Loader />
-            </div>
-          ) : (
-            <div className="pt-1">
-              {connected && (
-                <div className="flex justify-end text-xs font-light text-gray-400 px-3 pb-1">
-                  <p>
-                    Current balance: {balance || 0} ${pool.token.symbol}
-                  </p>
-                </div>
-              )}
-              <div className="flex justify-between gap-7">
-                <BuyTokensForm
-                  pool={pool}
-                  onSubmit={refetchBalance}
-                  disabled={!!processingTransaction}
-                />
-                {canSell && (
-                  <SellTokensForm
-                    pool={pool}
-                    tokenBalance={balance}
-                    onSubmit={refetchBalance}
-                    disabled={!!processingTransaction}
-                  />
-                )}
-              </div>
-            </div>
-          )}
         </div>
       )}
+      {/* Comments */}
+      <div className='pt-3'>
+        <AddCommentForm poolId={pool.id} />
+        <div className="flex flex-col pt-2 gap-2">
+          {pool.comments.map((comment) => (
+            <Comment key={comment.id} comment={comment} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

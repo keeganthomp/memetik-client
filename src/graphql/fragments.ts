@@ -18,6 +18,17 @@ export const TOKEN = gql`
   }
 `;
 
+export const COMMENT = gql`
+  fragment Comment on Comment {
+    id
+    createdAt
+    updatedAt
+    poolId
+    text
+    creator
+  }
+`;
+
 export const POOL = gql`
   fragment Pool on Pool {
     id
@@ -29,6 +40,10 @@ export const POOL = gql`
     token {
       ...Token
     }
+    comments {
+      ...Comment
+    }
   }
   ${TOKEN}
+  ${COMMENT}
 `;
