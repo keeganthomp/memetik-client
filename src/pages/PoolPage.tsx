@@ -126,7 +126,7 @@ const PoolPage = () => {
             <div className="pt-1">
               <div className="flex justify-end text-xs font-light text-gray-400 px-3 pb-1">
                 <p>
-                  Current balance: {balance} ${pool.token.symbol}
+                  Current balance: {balance || 0} ${pool.token.symbol}
                 </p>
               </div>
               <div className="flex justify-between gap-7">
