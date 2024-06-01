@@ -41,16 +41,28 @@ const Pool = ({ pool, isNew }: Props) => {
               ${token.symbol}
             </p>
           </div>
-          <div className="flex flex-col gap-1 justify-center text-gray-400 font-light text-sm">
+          {/* Desktop */}
+          <div className="hidden md:flex flex-col gap-1 justify-center text-gray-400 font-light text-sm">
             <div className="flex justify-between items-center">
-              <p className='pr-2'>Supply:</p>
+              <p className="pr-2">Supply:</p>
               <p>{getUnitAmount(token.supply)}</p>
             </div>
             <div className="flex justify-between items-center">
-              <p className='pr-2'>Last price:</p>
+              <p className="pr-2">Last price:</p>
               <p>{hasRecentPurchase ? getUnitAmount(token.latestPurchasePrice || 0) : 'N/A'}</p>
             </div>
           </div>
+        </div>
+      </div>
+      {/* Mobile */}
+      <div className="flex md:hidden w-full items-center gap-4 text-gray-400 font-light text-sm pt-2 px-1">
+        <div className="flex justify-between items-center">
+          <p className='pr-1'>Supply:</p>
+          <p>{getUnitAmount(token.supply)}</p>
+        </div>
+        <div className="flex justify-between items-center">
+          <p className='pr-1'>Last price:</p>
+          <p>{hasRecentPurchase ? getUnitAmount(token.latestPurchasePrice || 0) : 'N/A'}</p>
         </div>
       </div>
     </div>
