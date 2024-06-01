@@ -37,7 +37,7 @@ const HomePage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center pt-3">
+      <div className="flex justify-center pt-6">
         <Loader />
       </div>
     );
@@ -50,8 +50,8 @@ const HomePage = () => {
   const hasPoolsToShow = fetchedPools.length > 0 || newPools.length > 0;
 
   return (
-    <div className="h-screen overflow-y-auto pb-24 pt-3">
-      <div className="flex flex-col gap-8">
+    <div className="h-screen overflow-y-auto pb-36 md:pb-20 pt-3">
+      <div className="flex flex-col gap-2">
         {!hasPoolsToShow ? (
           <p className="text-center">No pools available</p>
         ) : (

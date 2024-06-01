@@ -119,7 +119,7 @@ export const getTokBalance = async ({
     });
     const info = await connection.getTokenAccountBalance(tokenAccount);
     return (info?.value?.uiAmount as number) || 0;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     const doesNotHaveTokenAccount = err?.message?.includes('could not find account'); // means wallet has no token account/no balance
     if (doesNotHaveTokenAccount) return 0;
@@ -138,5 +138,6 @@ export const getUnitAmount = (amount: number | string, decimals = 9) => {
     return '0'; // Adjust this based on the desired number of decimal places
   }
   const amountInUnits = numAmount / Math.pow(10, decimals);
-  return amountInUnits.toFixed(9).replace(/\.?0+$/, ''); // Adjust this based on the desired number of decimal places
+  const formattedUnitAmt = amountInUnits.toFixed(9).replace(/\.?0+$/, ''); // Adjust this based on the desired number of decimal places
+  return formattedUnitAmt;
 };

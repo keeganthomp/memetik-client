@@ -22,7 +22,7 @@ const ConnectWalletButton = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="self-center font-light" variant="outline">
+        <Button variant="outline" className="self-center rounded-full px-8 h-10">
           Connect
         </Button>
       </DialogTrigger>
@@ -56,7 +56,7 @@ const WalletInfo = ({ className = '' }: { className?: string }) => {
         <h2 className="font-light text-center pt-3">
           Currently connected with <span className="font-normal">{formattedAddress}</span>
         </h2>
-        <Button className="bg-red-400 hover:bg-red-500" onClick={disconnect}>
+        <Button className="bg-red-400 hover:bg-red-500 ring-0 focus:ring-0" onClick={disconnect}>
           Disconnect
         </Button>
       </DialogContent>

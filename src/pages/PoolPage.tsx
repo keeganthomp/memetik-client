@@ -14,6 +14,7 @@ import { SquareArrowOutUpRightIcon } from 'lucide-react';
 import TokenImage from '@/components/TokenImage';
 import useTokenBalance from '@/hooks/useTokenBalance';
 import { useTransaction } from '@/hooks/useTransaction';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const BackButton = () => {
   const navigate = useNavigate();
@@ -31,10 +32,10 @@ const BackButton = () => {
 };
 
 const PoolPage = () => {
+  const { connected } = useWallet();
   const { processingTransaction } = useTransaction();
   const { tokenAddress } = useParams();
   const { balance, isFetchingBalance, refetchBalance } = useTokenBalance({ token: tokenAddress });
-
   const { data, loading, error } = useQuery<GetPoolQuery>(GET_POOL, {
     variables: {
       contractAddress: tokenAddress,
@@ -43,7 +44,7 @@ const PoolPage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center pt-3">
+      <div className="flex justify-center pt-6">
         <Loader />
       </div>
     );
@@ -124,11 +125,13 @@ const PoolPage = () => {
             </div>
           ) : (
             <div className="pt-1">
-              <div className="flex justify-end text-xs font-light text-gray-400 px-3 pb-1">
-                <p>
-                  Current balance: {balance || 0} ${pool.token.symbol}
-                </p>
-              </div>
+              {connected && (
+                <div className="flex justify-end text-xs font-light text-gray-400 px-3 pb-1">
+                  <p>
+                    Current balance: {balance || 0} ${pool.token.symbol}
+                  </p>
+                </div>
+              )}
               <div className="flex justify-between gap-7">
                 <BuyTokensForm
                   pool={pool}
