@@ -6,13 +6,17 @@ import { SquareArrowOutUpRightIcon } from 'lucide-react';
 import { useConnection } from '@solana/wallet-adapter-react';
 import { useToast } from '@/components/ui/use-toast';
 import { Loader } from '@/components/ui/loader';
+import { TransactionContext } from '@/context/TransactionContext';
+import { useContext } from 'react';
 
 export const useTransaction = () => {
   const { toast } = useToast();
   const { connection } = useConnection();
+  const transactionContext = useContext(TransactionContext);
 
   const showTransactionToast = async (txnSig: string) => {
     const txnUrl = getExplorerUrl(txnSig);
+    transactionContext?.setProcessingTransaction(txnSig);
     const transactionToast = toast({
       duration: 16000,
       title: 'Waiting for transaction finalization',
@@ -49,7 +53,8 @@ export const useTransaction = () => {
         </div>
       ),
     });
+    transactionContext?.clearTransactionProcessing();
   };
 
-  return { showTransactionToast };
+  return { showTransactionToast, ...transactionContext };
 };

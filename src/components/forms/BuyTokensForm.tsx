@@ -26,13 +26,23 @@ import { useTransaction } from '@/hooks/useTransaction';
 
 type Props = {
   pool: Pool;
+  onSubmit?: () => void;
+  disabled?: boolean;
 };
 
 const buyTokensFormSchema = z.object({
   amount: z.number().min(0.000_000_001),
 });
 
-const BuyTokensForm = ({ closeDialog, pool }: { closeDialog: () => void; pool: Props['pool'] }) => {
+const BuyTokensForm = ({
+  closeDialog,
+  pool,
+  onSubmit: onSubmitProp,
+}: {
+  closeDialog: () => void;
+  pool: Props['pool'];
+  onSubmit: Props['onSubmit'];
+}) => {
   const { showTransactionToast } = useTransaction();
   const { toast } = useToast();
   const { connection } = useConnection();
@@ -63,7 +73,6 @@ const BuyTokensForm = ({ closeDialog, pool }: { closeDialog: () => void; pool: P
       });
       const signature = await sendTransaction(transaction, connection);
       closeDialog();
-      showTransactionToast(signature);
       // submit to server to update pool info in db
       // will ultimately emit socket event to update UI
       console.log('sending to server...');
@@ -72,6 +81,10 @@ const BuyTokensForm = ({ closeDialog, pool }: { closeDialog: () => void; pool: P
           txn: signature,
         },
       });
+      await showTransactionToast(signature);
+      if (onSubmitProp) {
+        onSubmitProp();
+      }
     } catch (error) {
       console.error('Error buying tokens:', error);
       toast({
@@ -135,7 +148,7 @@ const BuyTokensForm = ({ closeDialog, pool }: { closeDialog: () => void; pool: P
         />
         <Button
           disabled={!form.formState.isValid || form.formState.isSubmitting}
-          className="w-full h-10"
+          className="w-full h-11 rounded-full"
           type="submit"
         >
           {form.formState.isSubmitting ? <Loader /> : 'Buy Tokens'}
@@ -145,7 +158,7 @@ const BuyTokensForm = ({ closeDialog, pool }: { closeDialog: () => void; pool: P
   );
 };
 
-const DialogForm = ({ pool }: Props) => {
+const DialogForm = ({ pool, onSubmit, disabled }: Props) => {
   const { connected } = useWallet();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -156,9 +169,10 @@ const DialogForm = ({ pool }: Props) => {
   return (
     <Dialog open={isOpen} onOpenChange={handleFormOpen}>
       <Button
+        disabled={disabled}
         onClick={() => setIsOpen(true)}
         variant="ghost"
-        className="bg-green-400 hover:bg-green-500 text-white hover:text-white w-full tracking-wide rounded-lg"
+        className="bg-green-400 hover:bg-green-500 text-white hover:text-white w-full tracking-wide rounded-full h-11"
       >
         Buy
       </Button>
@@ -171,9 +185,9 @@ const DialogForm = ({ pool }: Props) => {
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle>Purchase ${pool.token.symbol}</DialogTitle>
+              <DialogTitle>Purchase {pool.token.name}</DialogTitle>
             </DialogHeader>
-            <BuyTokensForm pool={pool} closeDialog={() => setIsOpen(false)} />
+            <BuyTokensForm pool={pool} onSubmit={onSubmit} closeDialog={() => setIsOpen(false)} />
           </>
         )}
       </DialogContent>

@@ -23,24 +23,12 @@ const LeftSideBar = () => {
 const SidebarLayout = () => {
   return (
     <div className="w-full">
-      <div className="w-full md:w-2/3 grid grid-rows-[40px_1fr] px-3 md:px-5 pb-14 h-screen overflow-hidden mx-auto gap-0">
+      <div className="w-full md:w-3/5 grid grid-rows-[46px_1fr] px-3 md:px-5 pb-14 h-screen overflow-hidden mx-auto gap-0">
         <Header />
-        <div className="grid grid-cols-1 md:grid-cols-[10rem_1fr] gap-5">
+        <div className="flex flex-col md:grid grid-cols-1 md:grid-cols-[12rem_1fr] gap-1 md:gap-6">
           <LeftSideBar />
           <Outlet />
         </div>
-        <Toaster />
-      </div>
-    </div>
-  );
-};
-
-export const NoSidebarLayout = () => {
-  return (
-    <div className="w-full">
-      <div className="w-full md:w-2/3 grid grid-rows-[40px_1fr] px-3 md:px-5 pb-14 h-screen overflow-hidden mx-auto gap-0">
-        <Header />
-        <Outlet />
         <Toaster />
       </div>
     </div>

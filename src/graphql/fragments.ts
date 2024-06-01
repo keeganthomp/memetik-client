@@ -14,6 +14,7 @@ export const TOKEN = gql`
     latestPurchasePrice
     image
     description
+    marketCap
   }
 `;
 
@@ -23,8 +24,8 @@ export const POOL = gql`
     createdAt
     updatedAt
     creator
-    tokenId
     address
+    tokenAddress
     token {
       ...Token
     }

@@ -6,6 +6,7 @@ import { ApolloProvider } from '@apollo/client';
 import apolloClient from './lib/apolloClient';
 import router from './router';
 import { SocketProvider } from './context/SocketContext';
+import { TransactionProvider } from './context/TransactionContext';
 
 const getWalletEndpoint = () => {
   switch (import.meta.env.MODE) {
@@ -25,7 +26,9 @@ function App() {
       <ConnectionProvider endpoint={getWalletEndpoint()}>
         <WalletProvider autoConnect wallets={wallets}>
           <SocketProvider>
-            <RouterProvider router={router} />
+            <TransactionProvider>
+              <RouterProvider router={router} />
+            </TransactionProvider>
           </SocketProvider>
         </WalletProvider>
       </ConnectionProvider>

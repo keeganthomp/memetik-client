@@ -9,6 +9,18 @@ module.exports = {
   ],
   prefix: "",
   theme: {
+    fontFamily: {
+      sans: [
+        '-apple-system',
+        'ui-sans-serif',
+        'system-ui',
+        'sans-serif',
+        'Apple Color Emoji',
+        'Segoe UI Emoji',
+        'Segoe UI Symbol',
+        'Noto Color Emoji',
+      ],
+    },
     container: {
       center: true,
       padding: "2rem",

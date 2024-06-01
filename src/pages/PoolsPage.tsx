@@ -3,7 +3,7 @@ import { GET_POOLS } from '@/graphql/queries';
 import { useQuery } from '@apollo/client';
 import { GetPoolsQuery, Pool, PoolFragment } from '@/graphql/__generated__/graphql';
 import { Loader } from '@/components/ui/loader';
-import PoolPreview from '@/components/Pool';
+import PoolPreview from '@/components/PoolPreview';
 import useSocketEvent from '@/hooks/useSocketEvent';
 
 const HomePage = () => {

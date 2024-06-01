@@ -13,14 +13,14 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "\n  fragment Token on Token {\n    id\n    createdAt\n    updatedAt\n    name\n    symbol\n    uri\n    decimals\n    supply\n    address\n    latestPurchasePrice\n    image\n    description\n  }\n": types.TokenFragmentDoc,
-    "\n  fragment Pool on Pool {\n    id\n    createdAt\n    updatedAt\n    creator\n    tokenId\n    address\n    token {\n      ...Token\n    }\n  }\n  \n": types.PoolFragmentDoc,
+    "\n  fragment Token on Token {\n    id\n    createdAt\n    updatedAt\n    name\n    symbol\n    uri\n    decimals\n    supply\n    address\n    latestPurchasePrice\n    image\n    description\n    marketCap\n  }\n": types.TokenFragmentDoc,
+    "\n  fragment Pool on Pool {\n    id\n    createdAt\n    updatedAt\n    creator\n    address\n    tokenAddress\n    token {\n      ...Token\n    }\n  }\n  \n": types.PoolFragmentDoc,
     "\n  mutation createPoolFromTxn($txn: String!) {\n    createPoolFromTxn(txn: $txn) {\n      ...Pool\n    }\n  }\n  \n": types.CreatePoolFromTxnDocument,
     "\n  mutation updatePoolFromTxn($txn: String!) {\n    updatePoolFromTxn(txn: $txn) {\n      ...Pool\n    }\n  }\n  \n": types.UpdatePoolFromTxnDocument,
     "\n  query getPools {\n    getPools {\n      ...Pool\n    }\n  }\n  \n": types.GetPoolsDocument,
     "\n  query getTokenMetaPresignedUrl(\n    $mintAddress: String!\n    $fileType: String!\n    $assetType: FileUploadType!\n  ) {\n    getTokenMetaPresignedUrl(\n      mintAddress: $mintAddress\n      fileType: $fileType\n      assetType: $assetType\n    ) {\n      key\n      url\n    }\n  }\n": types.GetTokenMetaPresignedUrlDocument,
-    "\n  query getPool($address: String, $id: Int) {\n    getPool(address: $address, id: $id) {\n      ...Pool\n    }\n  }\n  \n": types.GetPoolDocument,
-    "\n  query getPoolByToken($contractAddress: String!) {\n    getPoolByToken(contractAddress: $contractAddress) {\n      ...Pool\n    }\n  }\n  \n": types.GetPoolByTokenDocument,
+    "\n  query getPool($address: String, $id: Int, $contractAddress: String) {\n    getPool(address: $address, id: $id, contractAddress: $contractAddress) {\n      ...Pool\n      token {\n        ...Token\n        holders\n      }\n    }\n  }\n  \n  \n": types.GetPoolDocument,
+    "\n  query getToken($contractAddress: String!) {\n    getToken(contractAddress: $contractAddress) {\n      ...Token\n    }\n  }\n  \n": types.GetTokenDocument,
 };
 
 /**
@@ -40,11 +40,11 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  fragment Token on Token {\n    id\n    createdAt\n    updatedAt\n    name\n    symbol\n    uri\n    decimals\n    supply\n    address\n    latestPurchasePrice\n    image\n    description\n  }\n"): (typeof documents)["\n  fragment Token on Token {\n    id\n    createdAt\n    updatedAt\n    name\n    symbol\n    uri\n    decimals\n    supply\n    address\n    latestPurchasePrice\n    image\n    description\n  }\n"];
+export function gql(source: "\n  fragment Token on Token {\n    id\n    createdAt\n    updatedAt\n    name\n    symbol\n    uri\n    decimals\n    supply\n    address\n    latestPurchasePrice\n    image\n    description\n    marketCap\n  }\n"): (typeof documents)["\n  fragment Token on Token {\n    id\n    createdAt\n    updatedAt\n    name\n    symbol\n    uri\n    decimals\n    supply\n    address\n    latestPurchasePrice\n    image\n    description\n    marketCap\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  fragment Pool on Pool {\n    id\n    createdAt\n    updatedAt\n    creator\n    tokenId\n    address\n    token {\n      ...Token\n    }\n  }\n  \n"): (typeof documents)["\n  fragment Pool on Pool {\n    id\n    createdAt\n    updatedAt\n    creator\n    tokenId\n    address\n    token {\n      ...Token\n    }\n  }\n  \n"];
+export function gql(source: "\n  fragment Pool on Pool {\n    id\n    createdAt\n    updatedAt\n    creator\n    address\n    tokenAddress\n    token {\n      ...Token\n    }\n  }\n  \n"): (typeof documents)["\n  fragment Pool on Pool {\n    id\n    createdAt\n    updatedAt\n    creator\n    address\n    tokenAddress\n    token {\n      ...Token\n    }\n  }\n  \n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -64,11 +64,11 @@ export function gql(source: "\n  query getTokenMetaPresignedUrl(\n    $mintAddre
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query getPool($address: String, $id: Int) {\n    getPool(address: $address, id: $id) {\n      ...Pool\n    }\n  }\n  \n"): (typeof documents)["\n  query getPool($address: String, $id: Int) {\n    getPool(address: $address, id: $id) {\n      ...Pool\n    }\n  }\n  \n"];
+export function gql(source: "\n  query getPool($address: String, $id: Int, $contractAddress: String) {\n    getPool(address: $address, id: $id, contractAddress: $contractAddress) {\n      ...Pool\n      token {\n        ...Token\n        holders\n      }\n    }\n  }\n  \n  \n"): (typeof documents)["\n  query getPool($address: String, $id: Int, $contractAddress: String) {\n    getPool(address: $address, id: $id, contractAddress: $contractAddress) {\n      ...Pool\n      token {\n        ...Token\n        holders\n      }\n    }\n  }\n  \n  \n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query getPoolByToken($contractAddress: String!) {\n    getPoolByToken(contractAddress: $contractAddress) {\n      ...Pool\n    }\n  }\n  \n"): (typeof documents)["\n  query getPoolByToken($contractAddress: String!) {\n    getPoolByToken(contractAddress: $contractAddress) {\n      ...Pool\n    }\n  }\n  \n"];
+export function gql(source: "\n  query getToken($contractAddress: String!) {\n    getToken(contractAddress: $contractAddress) {\n      ...Token\n    }\n  }\n  \n"): (typeof documents)["\n  query getToken($contractAddress: String!) {\n    getToken(contractAddress: $contractAddress) {\n      ...Token\n    }\n  }\n  \n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

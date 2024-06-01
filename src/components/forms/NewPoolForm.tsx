@@ -206,7 +206,10 @@ const DialogForm = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleFormOpen}>
-      <Button className="w-full rounded-lg" onClick={() => setIsOpen(true)}>
+      <Button
+        className="w-full rounded-full bg-slate-500 hover:bg-slate-600 text-white h-11 text-lg tracking-wide"
+        onClick={() => setIsOpen(true)}
+      >
         Launch Token
       </Button>
       <DialogContent className="max-w-[95%] rounded md:max-w-[425px]">

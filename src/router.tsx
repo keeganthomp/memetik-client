@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 // Layouts
-import SidebarLayout, { NoSidebarLayout } from './Layout';
+import SidebarLayout from './Layout';
 // Pages
 import ErrorPage from './pages/ErrorPage';
 import PoolsPage from './pages/PoolsPage';
@@ -15,14 +15,8 @@ const router = createBrowserRouter([
         index: true,
         element: <PoolsPage />,
       },
-    ],
-  },
-  {
-    path: '/pool',
-    element: <NoSidebarLayout />,
-    children: [
       {
-        path: ':poolId',
+        path: ':tokenAddress',
         element: <PoolPage />,
       },
     ],

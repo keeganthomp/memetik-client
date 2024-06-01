@@ -53,7 +53,7 @@ const useTokenBalance = ({ token }: UseTokenBalanceProps) => {
     }
   }, [anchorWallet, connection, token]);
 
-  return { isFetchingBalance, errorFetchingBalance, balance };
+  return { isFetchingBalance, errorFetchingBalance, balance, refetchBalance: fetchTokenBalance };
 };
 
 export default useTokenBalance;

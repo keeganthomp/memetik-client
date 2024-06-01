@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { POOL } from './fragments';
+import { POOL, TOKEN } from './fragments';
 
 export const GET_POOLS = gql`
   query getPools {
@@ -28,19 +28,24 @@ export const GET_TOKEN_META_PRESIGNED_URL = gql`
 `;
 
 export const GET_POOL = gql`
-  query getPool($address: String, $id: Int) {
-    getPool(address: $address, id: $id) {
+  query getPool($address: String, $id: Int, $contractAddress: String) {
+    getPool(address: $address, id: $id, contractAddress: $contractAddress) {
       ...Pool
+      token {
+        ...Token
+        holders
+      }
     }
   }
   ${POOL}
+  ${TOKEN}
 `;
 
-export const GET_POOL_BY_TOKEN = gql`
-  query getPoolByToken($contractAddress: String!) {
-    getPoolByToken(contractAddress: $contractAddress) {
-      ...Pool
+export const GET_TOKEN = gql`
+  query getToken($contractAddress: String!) {
+    getToken(contractAddress: $contractAddress) {
+      ...Token
     }
   }
-  ${POOL}
+  ${TOKEN}
 `;
