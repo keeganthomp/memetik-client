@@ -7,23 +7,15 @@ import apolloClient from './lib/apolloClient';
 import router from './router';
 import { SocketProvider } from './context/SocketContext';
 import { TransactionProvider } from './context/TransactionContext';
-
-const getWalletEndpoint = () => {
-  switch (import.meta.env.MODE) {
-    case 'development':
-      return clusterApiUrl('devnet');
-    case 'beta':
-      return clusterApiUrl('devnet');
-    default:
-      return clusterApiUrl('mainnet-beta');
-  }
-};
+import { getNetwork } from '@/lib/utils';
 
 function App() {
+  const network = getNetwork();
+  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
   const wallets = useMemo(() => [], []);
   return (
     <ApolloProvider client={apolloClient}>
-      <ConnectionProvider endpoint={getWalletEndpoint()}>
+      <ConnectionProvider endpoint={endpoint}>
         <WalletProvider autoConnect wallets={wallets}>
           <SocketProvider>
             <TransactionProvider>

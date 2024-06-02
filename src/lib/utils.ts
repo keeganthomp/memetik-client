@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import * as anchor from '@coral-xyz/anchor';
+import { Cluster } from '@solana/web3.js';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -75,4 +76,15 @@ export const waitForTxnFinalization = async (
     }
   }
   console.log('Transaction finalized');
+};
+
+export const getNetwork = (): Cluster => {
+  switch (import.meta.env.MODE) {
+    case 'development':
+      return 'devnet';
+    case 'beta':
+      return 'devnet';
+    default:
+      return 'mainnet-beta';
+  }
 };

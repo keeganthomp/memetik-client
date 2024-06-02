@@ -2,11 +2,17 @@ import { Outlet } from 'react-router-dom';
 import WalletInfo from './components/WalletInfo';
 import { Toaster } from '@/components/ui/toaster';
 import NewPoolForm from '@/components/forms/NewPoolForm';
+import { getNetwork } from './lib/utils';
+import { useMemo } from 'react';
 
 const Header = () => {
+  const network = useMemo(() => getNetwork(), []);
+  const isMainnet = network === 'mainnet-beta';
   return (
     <div className="w-full h-full backdrop-blur-md bg-white/30 flex justify-between items-center z-10">
-      <p className="tracking-wide font-light">Memetik</p>
+      <p className="tracking-wide font-light">
+        Memetik {!isMainnet && <span className="italic">(devnet)</span>}
+      </p>
       <WalletInfo />
     </div>
   );
