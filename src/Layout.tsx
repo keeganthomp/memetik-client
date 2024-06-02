@@ -20,7 +20,7 @@ const Header = () => {
 
 const LeftSideBar = () => {
   return (
-    <div className="w-full md:w-[12rem] relative md:fixed pt-3 ">
+    <div className="w-full md:w-[12rem] relative md:fixed pt-3 z-10">
       <NewPoolForm />
     </div>
   );
