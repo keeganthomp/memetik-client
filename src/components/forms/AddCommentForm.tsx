@@ -21,6 +21,7 @@ import { useMutation } from '@apollo/client';
 import { AddCommentMutation } from '@/graphql/__generated__/graphql';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useParams } from 'react-router-dom';
+import { Loader } from '@/components/ui/loader';
 
 const newCommentFormSchema = z.object({
   comment: z.string().min(1, 'Comment cannot be empty'),
@@ -107,7 +108,7 @@ const NewCommentForm = ({
           className="w-full h-11 rounded-full"
           type="submit"
         >
-          {form.formState.isSubmitting ? 'Submitting...' : 'Submit'}
+          {form.formState.isSubmitting ? <Loader /> : 'Submit'} 
         </Button>
       </form>
     </Form>
