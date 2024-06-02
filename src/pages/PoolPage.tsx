@@ -72,8 +72,8 @@ const PoolPage = () => {
   const canSell = !isFetchingBalance && (balance || 0) > 0;
 
   return (
-    <div className="pt-0 md:pt-3 h-screen overflow-y-auto pb-36 md:pb-20">
-      <div className="pb-2 pt-3 md:pt-0">
+    <div>
+      <div className="pb-2 pt-3">
         <BackButton />
       </div>
       {!pool ? (

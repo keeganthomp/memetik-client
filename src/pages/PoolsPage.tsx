@@ -50,21 +50,19 @@ const HomePage = () => {
   const hasPoolsToShow = fetchedPools.length > 0 || newPools.length > 0;
 
   return (
-    <div className="h-screen overflow-y-auto pb-36 md:pb-20 pt-3">
-      <div className="flex flex-col gap-2">
-        {!hasPoolsToShow ? (
-          <p className="text-center">No pools available</p>
-        ) : (
-          <>
-            {newPools.map((pool, i) => (
-              <PoolPreview key={pool?.address} pool={pool} isNew={i === 0} />
-            ))}
-            {fetchedPools.map((pool) => (
-              <PoolPreview key={pool?.address} pool={pool} />
-            ))}
-          </>
-        )}
-      </div>
+    <div className="flex flex-col gap-2">
+      {!hasPoolsToShow ? (
+        <p className="text-center">No pools available</p>
+      ) : (
+        <>
+          {newPools.map((pool, i) => (
+            <PoolPreview key={pool?.address} pool={pool} isNew={i === 0} />
+          ))}
+          {fetchedPools.map((pool) => (
+            <PoolPreview key={pool?.address} pool={pool} />
+          ))}
+        </>
+      )}
     </div>
   );
 };
