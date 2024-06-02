@@ -47,7 +47,7 @@ const BuyTokensForm = ({
   const { toast } = useToast();
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
-  const { sendTransaction } = useWallet();
+  // const { sendTransaction } = useWallet();
   const [updatePoolFromTxn] = useMutation<UpdatePoolFromTxnMutation>(UPDATE_POOL_FROM_TXN);
 
   const form = useForm<z.infer<typeof buyTokensFormSchema>>({
@@ -71,7 +71,8 @@ const BuyTokensForm = ({
         poolId: pool.id,
         amount: atomicAmount,
       });
-      const signature = await sendTransaction(transaction, connection);
+      const signedTxn = await anchorWallet.signTransaction(transaction);
+      const signature = await connection.sendRawTransaction(signedTxn.serialize());
       closeDialog();
       // submit to server to update pool info in db
       // will ultimately emit socket event to update UI
