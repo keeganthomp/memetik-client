@@ -5,7 +5,7 @@ import { getTokBalance } from '@/program/utils';
 import * as anchor from '@coral-xyz/anchor';
 
 interface UseTokenBalanceProps {
-  token: string | anchor.BN;
+  token?: string | anchor.web3.PublicKey | null;
 }
 
 const useTokenBalance = ({ token }: UseTokenBalanceProps) => {
@@ -17,6 +17,7 @@ const useTokenBalance = ({ token }: UseTokenBalanceProps) => {
   const anchorWallet = useAnchorWallet();
 
   const fetchTokenBalance = async () => {
+    if (!token) return;
     try {
       setIsFetchingBalance(true);
       setErrorFetchingBalance(null);
@@ -25,7 +26,7 @@ const useTokenBalance = ({ token }: UseTokenBalanceProps) => {
         throw new Error('Wallet not connected');
       }
 
-      const tokenAddress = typeof token === 'string' ? token : token?.toBase58();
+      const tokenAddress = typeof token === 'string' ? token : token?.toString();
       const balance = await getTokBalance({
         connection,
         wallet: anchorWallet!,
@@ -53,7 +54,13 @@ const useTokenBalance = ({ token }: UseTokenBalanceProps) => {
     }
   }, [anchorWallet, connection, token]);
 
-  return { isFetchingBalance, errorFetchingBalance, balance, refetchBalance: fetchTokenBalance };
+  return {
+    isFetchingBalance,
+    errorFetchingBalance,
+    balance,
+    formattedBalance: balance ? balance?.toFixed(0)?.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 0,
+    refetchBalance: fetchTokenBalance,
+  };
 };
 
 export default useTokenBalance;

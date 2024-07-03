@@ -1,12 +1,5 @@
 import * as anchor from '@coral-xyz/anchor';
-import {
-  ProgramInteractionArgs,
-  getProgram,
-  getNum,
-  getMetadataPDA,
-  getMintPDA,
-  getNextPoolId,
-} from './utils';
+import { ProgramInteractionArgs, getProgram, getMetadataPDA, getMintPDA } from './utils';
 
 type CreatePoolArgs = ProgramInteractionArgs & {
   token: {
@@ -17,18 +10,17 @@ type CreatePoolArgs = ProgramInteractionArgs & {
 };
 
 type TokenTransactionArgs = ProgramInteractionArgs & {
-  poolId: number | typeof anchor.BN;
+  symbol: string;
   amount: number;
 };
 
-export const createPoolTxn = async (args: CreatePoolArgs) => {
+export const makeCreatePoolTxn = async (args: CreatePoolArgs) => {
   const program = getProgram(args);
-  const poolId = await getNextPoolId(args);
-  const mint = getMintPDA({ ...args, poolId });
+  const mint = getMintPDA(args.token.symbol);
   const metadataPDA = getMetadataPDA(mint);
   const creator = args.wallet.publicKey;
   const transaction = await program.methods
-    .initialize(new anchor.BN(poolId), args.token)
+    .initialize(args.token)
     .accounts({
       signer: creator,
       metadata: metadataPDA,
@@ -40,17 +32,16 @@ export const createPoolTxn = async (args: CreatePoolArgs) => {
   return transaction;
 };
 
-export const buyTokensTxn = async (args: TokenTransactionArgs) => {
+export const makeBuyTokenTxn = async (args: TokenTransactionArgs) => {
   const program = getProgram(args);
-  const poolIdNum = getNum(args.poolId);
-  const mintPDA = getMintPDA({ ...args, poolId: poolIdNum });
+  const mintPDA = getMintPDA(args.symbol);
   const buyer = args.wallet.publicKey;
   const buyerTokenAccount = await anchor.utils.token.associatedAddress({
     mint: mintPDA,
     owner: buyer,
   });
   const transaction = await program.methods
-    .buy(new anchor.BN(poolIdNum), new anchor.BN(args.amount))
+    .buy(args.symbol, new anchor.BN(args.amount))
     .accounts({
       buyer: buyer,
       buyerTokenAccount,
@@ -62,17 +53,16 @@ export const buyTokensTxn = async (args: TokenTransactionArgs) => {
   return transaction;
 };
 
-export const sellTokensTxn = async (args: TokenTransactionArgs) => {
+export const makeSellTokenTxn = async (args: TokenTransactionArgs) => {
   const program = getProgram(args);
-  const poolIdNum = getNum(args.poolId);
-  const mintPDA = getMintPDA({ ...args, poolId: poolIdNum });
+  const mintPDA = getMintPDA(args.symbol);
   const seller = args.wallet.publicKey;
   const sellerTokenAccount = await anchor.utils.token.associatedAddress({
     mint: mintPDA,
     owner: seller,
   });
   const transaction = await program.methods
-    .sell(new anchor.BN(poolIdNum), new anchor.BN(args.amount))
+    .sell(args.symbol, new anchor.BN(args.amount))
     .accounts({
       seller,
       sellerTokenAccount,

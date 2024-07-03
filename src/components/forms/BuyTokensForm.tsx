@@ -12,20 +12,20 @@ import {
   FormDescription,
 } from '@/components/ui/form';
 import { useConnection, useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
-import { buyTokensTxn } from '@/program';
+import { makeBuyTokenTxn } from '@/program';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Loader } from '@/components/ui/loader';
 import { useToast } from '@/components/ui/use-toast';
 import { getAtomicAmount } from '@/program/utils';
-import { UPDATE_POOL_FROM_TXN } from '@/graphql/mutations';
-import { UpdatePoolFromTxnMutation, Pool } from '@/graphql/__generated__/graphql';
+import { RECORD_TRADE } from '@/graphql/mutations';
+import { RecordTradeMutation, Token, Pool } from '@/graphql/__generated__/graphql';
 import { useMutation } from '@apollo/client';
 import { useTransaction } from '@/hooks/useTransaction';
 
 type Props = {
-  pool: Pool;
+  pool?: Pool | null;
   onSubmit?: () => void;
   disabled?: boolean;
 };
@@ -35,20 +35,21 @@ const buyTokensFormSchema = z.object({
 });
 
 const BuyTokensForm = ({
+  token,
   closeDialog,
-  pool,
   onSubmit: onSubmitProp,
 }: {
   closeDialog: () => void;
-  pool: Props['pool'];
+  token?: Token | null;
   onSubmit: Props['onSubmit'];
 }) => {
   const { showTransactionToast } = useTransaction();
   const { toast } = useToast();
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
+
   // const { sendTransaction } = useWallet();
-  const [updatePoolFromTxn] = useMutation<UpdatePoolFromTxnMutation>(UPDATE_POOL_FROM_TXN);
+  const [recordTrade] = useMutation<RecordTradeMutation>(RECORD_TRADE);
 
   const form = useForm<z.infer<typeof buyTokensFormSchema>>({
     resolver: zodResolver(buyTokensFormSchema),
@@ -63,12 +64,18 @@ const BuyTokensForm = ({
       alert('Wallet not connected');
       return;
     }
+    if (!token) {
+      console.error('Token not found');
+      window.alert('Token not found');
+      return;
+    }
+
     try {
       const atomicAmount = getAtomicAmount(amount);
-      const transaction = await buyTokensTxn({
+      const transaction = await makeBuyTokenTxn({
         connection,
         wallet: anchorWallet,
-        poolId: pool.id,
+        symbol: token.symbol,
         amount: atomicAmount,
       });
       const signedTxn = await anchorWallet.signTransaction(transaction);
@@ -77,9 +84,9 @@ const BuyTokensForm = ({
       // submit to server to update pool info in db
       // will ultimately emit socket event to update UI
       console.log('sending to server...');
-      updatePoolFromTxn({
+      recordTrade({
         variables: {
-          txn: signature,
+          transaction: signature,
         },
       });
       await showTransactionToast(signature);
@@ -87,7 +94,7 @@ const BuyTokensForm = ({
         onSubmitProp();
       }
     } catch (error) {
-      console.error('Error buying tokens:', error);
+      console.error('Error buying tokens:', JSON.stringify(error, null, 2));
       toast({
         variant: 'destructive',
         title: 'Error buying tokens',
@@ -95,6 +102,10 @@ const BuyTokensForm = ({
       });
     }
   };
+
+  if (!token) {
+    return <p className="text-center">Token not found</p>;
+  }
 
   return (
     <Form {...form}>
@@ -107,7 +118,7 @@ const BuyTokensForm = ({
               <div className="pb-[7px]">
                 <FormLabel>Amount</FormLabel>
                 <FormDescription className="text-gray-400 text-xs">
-                  How much ${pool.token.symbol} do you want to purchase?
+                  How much ${token.symbol} do you want to purchase?
                 </FormDescription>
               </div>
               <FormControl>
@@ -167,6 +178,10 @@ const DialogForm = ({ pool, onSubmit, disabled }: Props) => {
     setIsOpen(isOpen);
   };
 
+  if (!pool) {
+    return <p className="text-center">Pool not found</p>;
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={handleFormOpen}>
       <Button
@@ -186,9 +201,13 @@ const DialogForm = ({ pool, onSubmit, disabled }: Props) => {
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle>Purchase {pool.token.name}</DialogTitle>
+              <DialogTitle>Purchase {pool?.token?.name}</DialogTitle>
             </DialogHeader>
-            <BuyTokensForm pool={pool} onSubmit={onSubmit} closeDialog={() => setIsOpen(false)} />
+            <BuyTokensForm
+              token={pool?.token}
+              onSubmit={onSubmit}
+              closeDialog={() => setIsOpen(false)}
+            />
           </>
         )}
       </DialogContent>

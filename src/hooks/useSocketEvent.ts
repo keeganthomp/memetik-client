@@ -1,8 +1,8 @@
 import { useSocket, SocketEvent } from './useSocket';
 import { useEffect } from 'react';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const useSocketEvent = (eventName: SocketEvent, callback: (data?: any) => void) => {
+// Define the hook with a generic type T for the data
+const useSocketEvent = <T>(eventName: SocketEvent, callback: (data: T) => void) => {
   const socket = useSocket();
 
   useEffect(() => {

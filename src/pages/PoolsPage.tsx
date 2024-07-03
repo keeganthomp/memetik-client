@@ -6,7 +6,7 @@ import { Loader } from '@/components/ui/loader';
 import PoolPreview from '@/components/PoolPreview';
 import useSocketEvent from '@/hooks/useSocketEvent';
 
-const HomePage = () => {
+const PoolsPage = () => {
   const [newPools, setNewPools] = useState<Pool[]>([]);
   const { data, loading, error } = useQuery<GetPoolsQuery>(GET_POOLS, {
     fetchPolicy: 'network-only',
@@ -17,23 +17,26 @@ const HomePage = () => {
 
   const fetchedPools = useMemo(() => {
     const pools = (data?.getPools as Pool[]) || [];
-    return pools.filter((pool) => !newPools.some((newPool) => newPool.address === pool.address));
+    return pools.filter(
+      (pool) => !newPools.some((newPool) => newPool.contractAddress === pool.contractAddress)
+    );
   }, [data]);
 
   const handleNewPoolCreated = useCallback((newPoolFromDb: Pool) => {
     const isPoolAlreadyFetched = data?.getPools?.some(
-      (pool) => (pool as PoolFragment)?.address === newPoolFromDb.address
+      (pool) => (pool as PoolFragment)?.contractAddress === newPoolFromDb.contractAddress
     );
     const isNewPoolAlreadyAdded = newPools.some(
-      (pool) => (pool as PoolFragment)?.address === newPoolFromDb.address
+      (pool) => (pool as PoolFragment)?.contractAddress === newPoolFromDb.contractAddress
     );
     const isAlreadyAccountedFor = isPoolAlreadyFetched || isNewPoolAlreadyAdded;
     if (!isAlreadyAccountedFor) {
       setNewPools((prev) => [newPoolFromDb, ...prev]);
     }
   }, []);
+
   // Listen for the POOL_CREATED event using the custom hook
-  useSocketEvent('POOL_CREATED', handleNewPoolCreated);
+  useSocketEvent<Pool>('POOL_CREATED', handleNewPoolCreated);
 
   if (loading) {
     return (
@@ -56,10 +59,10 @@ const HomePage = () => {
       ) : (
         <>
           {newPools.map((pool, i) => (
-            <PoolPreview key={pool?.address} pool={pool} isNew={i === 0} />
+            <PoolPreview key={pool?.contractAddress} pool={pool} isNew={i === 0} />
           ))}
           {fetchedPools.map((pool) => (
-            <PoolPreview key={pool?.address} pool={pool} />
+            <PoolPreview key={pool?.contractAddress} pool={pool} />
           ))}
         </>
       )}
@@ -67,4 +70,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default PoolsPage;

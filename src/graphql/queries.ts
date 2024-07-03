@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { POOL, TOKEN } from './fragments';
+import { POOL, TOKEN, USER, TRADE, CANDLE_STICK } from './fragments';
 
 export const GET_POOLS = gql`
   query getPools {
@@ -28,8 +28,8 @@ export const GET_TOKEN_META_PRESIGNED_URL = gql`
 `;
 
 export const GET_POOL = gql`
-  query getPool($address: String, $id: Int, $contractAddress: String) {
-    getPool(address: $address, id: $id, contractAddress: $contractAddress) {
+  query getPool($symbol: String, $contractAddress: String) {
+    getPool(symbol: $symbol, contractAddress: $contractAddress) {
       ...Pool
       token {
         ...Token
@@ -48,4 +48,57 @@ export const GET_TOKEN = gql`
     }
   }
   ${TOKEN}
+`;
+
+export const GET_PROFILE = gql`
+  query getProfile {
+    getProfile {
+      ...User
+    }
+  }
+  ${USER}
+`;
+
+export const GET_TRADES = gql`
+  query getTrades($symbol: String!) {
+    getTrades(symbol: $symbol) {
+      trades {
+        ...Trade
+      }
+      candleSticks {
+        ONE_SECOND {
+          ...CandleStick
+        }
+        THIRTY_SECONDS {
+          ...CandleStick
+        }
+        ONE_MINUTE {
+          ...CandleStick
+        }
+        FIVE_MINUTES {
+          ...CandleStick
+        }
+        FIFTEEN_MINUTES {
+          ...CandleStick
+        }
+        THIRTY_MINUTES {
+          ...CandleStick
+        }
+        ONE_HOUR {
+          ...CandleStick
+        }
+        FOUR_HOURS {
+          ...CandleStick
+        }
+        ONE_DAY {
+          ...CandleStick
+        }
+        ONE_WEEK {
+          ...CandleStick
+        }
+      }
+    }
+  }
+  ${TRADE}
+  ${CANDLE_STICK}
 `;

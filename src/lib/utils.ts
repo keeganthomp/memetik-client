@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import * as anchor from '@coral-xyz/anchor';
 import { Cluster } from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const formatAddress = (address: string) => {
+export const formatAddress = (address?: string | null) => {
   if (!address) return '';
   const charsToShow = 4;
   return `${address.slice(0, charsToShow)}...${address.slice(-charsToShow)}`;
@@ -87,4 +89,78 @@ export const getNetwork = (): Cluster => {
     default:
       return 'mainnet-beta';
   }
+};
+
+export const checkValidSolanaWallet = (walletAddress?: string | null) => {
+  if (!walletAddress) return false;
+  try {
+    const publicKey = new PublicKey(walletAddress);
+    return PublicKey.isOnCurve(publicKey.toBuffer());
+  } catch (e) {
+    return false;
+  }
+};
+
+//////////////////////
+// for testing chart
+//////////////////////
+export const generateChartData = (numberOfCandles = 500, updatesPerCandle = 5, startAt = 100) => {
+  const randomFactor = 25 + Math.random() * 25;
+  const samplePoint = (i: number): number =>
+    i *
+      (0.5 +
+        Math.sin(i / 1) * 0.2 +
+        Math.sin(i / 2) * 0.4 +
+        Math.sin(i / randomFactor) * 0.8 +
+        Math.sin(i / 50) * 0.5) +
+    200 +
+    i * 2;
+  const createCandle = (val: number, time: number): any => ({
+    time,
+    open: val,
+    high: val,
+    low: val,
+    close: val,
+  });
+  const updateCandle = (candle: any, val: number): any => ({
+    ...candle,
+    close: val,
+    low: Math.min(candle.low, val),
+    high: Math.max(candle.high, val),
+  });
+  const date = new Date(Date.UTC(2018, 0, 1, 12, 0, 0, 0));
+  const numberOfPoints = numberOfCandles * updatesPerCandle;
+  const initialData: any[] = [];
+  const realtimeUpdates: any[] = [];
+  let lastCandle: any | null = null;
+  let previousValue = samplePoint(-1);
+
+  for (let i = 0; i < numberOfPoints; ++i) {
+    if (i % updatesPerCandle === 0) {
+      date.setUTCDate(date.getUTCDate() + 1);
+    }
+    const time = date.getTime() / 1000;
+    let value = samplePoint(i);
+    const diff = (value - previousValue) * Math.random();
+    value = previousValue + diff;
+    previousValue = value;
+    if (i % updatesPerCandle === 0) {
+      const candle = createCandle(value, time);
+      lastCandle = candle;
+      if (i >= startAt) {
+        realtimeUpdates.push(candle);
+      }
+    } else if (lastCandle) {
+      lastCandle = updateCandle(lastCandle, value);
+      if (i >= startAt) {
+        realtimeUpdates.push(lastCandle);
+      } else if ((i + 1) % updatesPerCandle === 0) {
+        initialData.push(lastCandle);
+      }
+    }
+  }
+  return {
+    initialData,
+    realtimeUpdates,
+  };
 };

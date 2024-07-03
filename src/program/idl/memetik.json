@@ -1,5 +1,5 @@
 {
-  "address": "AQWyAazxs3Dz6vJVBAb5wKu4pN9scWqVansE7g2gyKGg",
+  "address": "14a3y3QApSRvxd8kgG9S4FTjQFeTQ92XpUxTvXkTrknR",
   "metadata": {
     "name": "memetik",
     "version": "0.1.0",
@@ -41,7 +41,7 @@
               },
               {
                 "kind": "arg",
-                "path": "pool_id"
+                "path": "ticker"
               }
             ]
           }
@@ -62,7 +62,7 @@
               },
               {
                 "kind": "arg",
-                "path": "pool_id"
+                "path": "ticker"
               }
             ]
           }
@@ -70,31 +70,6 @@
         {
           "name": "buyer_token_account",
           "writable": true
-        },
-        {
-          "name": "global_state",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  103,
-                  108,
-                  111,
-                  98,
-                  97,
-                  108,
-                  45,
-                  115,
-                  116,
-                  97,
-                  116,
-                  101
-                ]
-              }
-            ]
-          }
         },
         {
           "name": "token_program",
@@ -111,12 +86,137 @@
       ],
       "args": [
         {
-          "name": "pool_id",
-          "type": "u64"
+          "name": "ticker",
+          "type": "string"
         },
         {
           "name": "amount",
           "type": "u64"
+        }
+      ],
+      "returns": {
+        "defined": {
+          "name": "Pool"
+        }
+      }
+    },
+    {
+      "name": "close",
+      "discriminator": [
+        98,
+        165,
+        201,
+        177,
+        108,
+        65,
+        206,
+        96
+      ],
+      "accounts": [
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "ticker"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108,
+                  45,
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "ticker"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "ticker",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "get_pool",
+      "discriminator": [
+        147,
+        6,
+        31,
+        180,
+        183,
+        38,
+        216,
+        153
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "ticker"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "ticker",
+          "type": "string"
         }
       ],
       "returns": {
@@ -159,7 +259,35 @@
               },
               {
                 "kind": "arg",
-                "path": "pool_id"
+                "path": "token_info.symbol"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108,
+                  45,
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "token_info.symbol"
               }
             ]
           }
@@ -184,32 +312,7 @@
               },
               {
                 "kind": "arg",
-                "path": "pool_id"
-              }
-            ]
-          }
-        },
-        {
-          "name": "global_state",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  103,
-                  108,
-                  111,
-                  98,
-                  97,
-                  108,
-                  45,
-                  115,
-                  116,
-                  97,
-                  116,
-                  101
-                ]
+                "path": "token_info.symbol"
               }
             ]
           }
@@ -232,10 +335,6 @@
         }
       ],
       "args": [
-        {
-          "name": "pool_id",
-          "type": "u64"
-        },
         {
           "name": "token_info",
           "type": {
@@ -285,7 +384,7 @@
               },
               {
                 "kind": "arg",
-                "path": "pool_id"
+                "path": "ticker"
               }
             ]
           }
@@ -306,7 +405,7 @@
               },
               {
                 "kind": "arg",
-                "path": "pool_id"
+                "path": "ticker"
               }
             ]
           }
@@ -314,31 +413,6 @@
         {
           "name": "seller_token_account",
           "writable": true
-        },
-        {
-          "name": "global_state",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  103,
-                  108,
-                  111,
-                  98,
-                  97,
-                  108,
-                  45,
-                  115,
-                  116,
-                  97,
-                  116,
-                  101
-                ]
-              }
-            ]
-          }
         },
         {
           "name": "token_program",
@@ -355,8 +429,8 @@
       ],
       "args": [
         {
-          "name": "_pool_id",
-          "type": "u64"
+          "name": "_ticker",
+          "type": "string"
         },
         {
           "name": "amount",
@@ -372,19 +446,6 @@
   ],
   "accounts": [
     {
-      "name": "GlobalState",
-      "discriminator": [
-        163,
-        46,
-        74,
-        168,
-        216,
-        123,
-        133,
-        98
-      ]
-    },
-    {
       "name": "Pool",
       "discriminator": [
         241,
@@ -396,66 +457,82 @@
         109,
         188
       ]
+    },
+    {
+      "name": "PoolEscrow",
+      "discriminator": [
+        120,
+        42,
+        206,
+        247,
+        95,
+        97,
+        187,
+        113
+      ]
     }
   ],
   "errors": [
     {
       "code": 6000,
-      "name": "IncorrectMintAccount",
-      "msg": "Incorrect mint account provided"
+      "name": "InvalidPoolTicker",
+      "msg": "Invalid pool ticker"
     },
     {
       "code": 6001,
-      "name": "IncorrectPoolId",
-      "msg": "Incorrect pool id"
+      "name": "NotPoolCreator",
+      "msg": "Not pool creator"
     },
     {
       "code": 6002,
+      "name": "NotEscrowOwner",
+      "msg": "Not escrow owner"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidEscrowAccount",
+      "msg": "Invalid escrow account"
+    },
+    {
+      "code": 6004,
+      "name": "InsufficientFundsInEscrow",
+      "msg": "Insufficient funds in escrow"
+    },
+    {
+      "code": 6005,
+      "name": "PoolNotMatured",
+      "msg": "Pool has not matured"
+    },
+    {
+      "code": 6006,
       "name": "NoTokensToSell",
       "msg": "No tokens to sell"
     },
     {
-      "code": 6003,
+      "code": 6007,
       "name": "MustBuyAtLeastOneToken",
       "msg": "Must buy at least one token"
     },
     {
-      "code": 6004,
-      "name": "Overflow",
-      "msg": "Overflow"
-    },
-    {
-      "code": 6005,
+      "code": 6008,
       "name": "PoolInsufficientFunds",
       "msg": "Pool has insufficient funds"
     },
     {
-      "code": 6006,
-      "name": "InvalidPoolId",
-      "msg": "Invalid pool id"
+      "code": 6009,
+      "name": "InvalidTickerFormat",
+      "msg": "Invalid ticker format"
     }
   ],
   "types": [
-    {
-      "name": "GlobalState",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "pools_created",
-            "type": "u64"
-          }
-        ]
-      }
-    },
     {
       "name": "Pool",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "id",
-            "type": "u64"
+            "name": "ticker",
+            "type": "string"
           },
           {
             "name": "tok_price",
@@ -464,6 +541,42 @@
           {
             "name": "mint",
             "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "maturity_time",
+            "type": "i64"
+          },
+          {
+            "name": "has_matured",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PoolEscrow",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "balance",
+            "type": "u64"
           }
         ]
       }

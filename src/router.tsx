@@ -5,10 +5,13 @@ import SidebarLayout from './Layout';
 import ErrorPage from './pages/ErrorPage';
 import PoolsPage from './pages/PoolsPage';
 import PoolPage from './pages/PoolPage';
+import ProfilePage from './pages/ProfilePage';
+// import HomePage from './pages/HomePage';
 
 const router = createBrowserRouter([
   {
     path: '/',
+    errorElement: <ErrorPage />,
     element: <SidebarLayout />,
     children: [
       {
@@ -19,11 +22,23 @@ const router = createBrowserRouter([
         path: ':tokenAddress',
         element: <PoolPage />,
       },
+      {
+        path: 'profile',
+        errorElement: <ErrorPage />,
+        element: <ProfilePage />,
+      },
+      {
+        path: 'pools',
+        errorElement: <ErrorPage />,
+        element: <PoolsPage />,
+        children: [
+          {
+            path: 'pools/:tokenAddress',
+            element: <PoolPage />,
+          },
+        ],
+      },
     ],
-  },
-  {
-    path: '*',
-    element: <ErrorPage />,
   },
 ]);
 export default router;

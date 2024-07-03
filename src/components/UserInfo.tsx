@@ -3,7 +3,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components
 import { useWallet, Wallet } from '@solana/wallet-adapter-react';
 import { formatAddress } from '@/lib/utils';
 import { cn } from '@/lib/utils';
-import { CiWallet } from 'react-icons/ci';
+import { CiWallet, CiUser } from 'react-icons/ci';
+import { useAuth } from '@/hooks/useAuth';
+import { Loader } from '@/components/ui/loader';
+import SignUpForm from '@/components/forms/LoginForm';
+import { useNavigate } from 'react-router-dom';
 
 const WalletOption = ({ wallet }: { wallet: Wallet }) => {
   const { select } = useWallet();
@@ -40,7 +44,7 @@ const ConnectWalletButton = () => {
   );
 };
 
-const WalletInfo = ({ className = '' }: { className?: string }) => {
+export const ConnectedWalletInfo = ({ className = '' }: { className?: string }) => {
   const { publicKey, disconnect } = useWallet();
   if (!publicKey) return <ConnectWalletButton />;
   const formattedAddress = formatAddress(publicKey?.toBase58());
@@ -64,4 +68,28 @@ const WalletInfo = ({ className = '' }: { className?: string }) => {
   );
 };
 
-export default WalletInfo;
+export const UserInfo = () => {
+  const navigate = useNavigate();
+  const { user, isAuthenticating } = useAuth();
+  console.log('isAuthenticating', isAuthenticating)
+  if (isAuthenticating) {
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
+  }
+  if (!user) return <SignUpForm />;
+
+  const formattedAddress = formatAddress(user.wallet || '');
+  const goToProfile = () => {
+    navigate('/profile');
+  };
+
+  return (
+    <div className="flex items-center gap-1 cursor-pointer" onClick={goToProfile}>
+      <p className="font-light">{formattedAddress}</p>
+      <CiUser size={17} />
+    </div>
+  );
+};

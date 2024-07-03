@@ -17,17 +17,17 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useConnection, useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
-import { createPoolTxn } from '@/program';
+import { makeCreatePoolTxn } from '@/program';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Loader } from '@/components/ui/loader';
 import { useToast } from '@/components/ui/use-toast';
 import { useMutation } from '@apollo/client';
-import { CREATE_POOL_FROM_TXN } from '@/graphql/mutations';
-import { CreatePoolFromTxnMutation } from '@/graphql/__generated__/graphql';
+import { CREATE_POOL } from '@/graphql/mutations';
+import { CreatePoolMutation } from '@/graphql/__generated__/graphql';
 import useAws from '@/hooks/useAWS';
-import { getNextPoolId, getMintPDA } from '@/program/utils';
+import { getMintPDA } from '@/program/utils';
 import { useTransaction } from '@/hooks/useTransaction';
 
 const tokenFormSchema = z.object({
@@ -45,7 +45,7 @@ const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
   const { connection } = useConnection();
   const anchorWallet = useAnchorWallet();
   const { sendTransaction } = useWallet();
-  const [createPoolFromTxn] = useMutation<CreatePoolFromTxnMutation>(CREATE_POOL_FROM_TXN);
+  const [createPoolFromTxn] = useMutation<CreatePoolMutation>(CREATE_POOL);
 
   const form = useForm<z.infer<typeof tokenFormSchema>>({
     resolver: zodResolver(tokenFormSchema),
@@ -62,8 +62,7 @@ const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
       return;
     }
     try {
-      const poolId = await getNextPoolId({ connection, wallet: anchorWallet });
-      const mintAddress = getMintPDA({ connection, wallet: anchorWallet, poolId });
+      const mintAddress = getMintPDA(token.symbol);
       const mintAddressString = mintAddress.toBase58();
       let imageUrl = '';
       if (image) {
@@ -83,7 +82,7 @@ const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
         ...token,
         uri: metadataUri as string,
       };
-      const transaction = await createPoolTxn({
+      const transaction = await makeCreatePoolTxn({
         connection,
         wallet: anchorWallet,
         token: tokenPayload,
@@ -96,7 +95,7 @@ const NewTokenForm = ({ closeDialog }: { closeDialog: () => void }) => {
       console.log('submitting txn to server...');
       createPoolFromTxn({
         variables: {
-          txn: signature,
+          transaction: signature,
         },
       });
     } catch (error) {

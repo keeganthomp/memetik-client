@@ -10,11 +10,10 @@ export const TOKEN = gql`
     uri
     decimals
     supply
-    address
+    contractAddress
     latestPurchasePrice
     image
     description
-    marketCap
   }
 `;
 
@@ -23,8 +22,8 @@ export const COMMENT = gql`
     id
     createdAt
     updatedAt
-    poolId
     text
+    poolId
     creator
   }
 `;
@@ -35,8 +34,8 @@ export const POOL = gql`
     createdAt
     updatedAt
     creator
-    address
-    tokenAddress
+    contractAddress
+    maturityTime
     token {
       ...Token
     }
@@ -46,4 +45,45 @@ export const POOL = gql`
   }
   ${TOKEN}
   ${COMMENT}
+`;
+
+export const USER = gql`
+  fragment User on User {
+    id
+    createdAt
+    updatedAt
+    name
+    email
+    username
+    bio
+    wallet
+    profilePicture
+    twitterUserId
+    twitterHandle
+  }
+`;
+
+export const TRADE = gql`
+  fragment Trade on Trade {
+    id
+    symbol
+    timestamp
+    price
+    quantity
+    trader
+    type
+  }
+`;
+
+export const CANDLE_STICK = gql`
+  fragment CandleStick on CandleStick {
+    id
+    symbol
+    timestamp
+    open
+    close
+    high
+    low
+    volume
+  }
 `;

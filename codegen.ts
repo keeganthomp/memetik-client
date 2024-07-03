@@ -21,7 +21,7 @@ const config: CodegenConfig = {
         flattenGeneratedTypesIncludeFragments: true,
         scalars: {
           JSON: 'string',
-          Date: 'string',
+          Date: 'string', // ISO Date string
           BigInt: 'string',
           UnixTimestamp: 'string',
         },

@@ -12,20 +12,20 @@ import {
   FormDescription,
 } from '@/components/ui/form';
 import { useConnection, useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
-import { sellTokensTxn } from '@/program';
+import { makeSellTokenTxn } from '@/program';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Loader } from '@/components/ui/loader';
 import { useToast } from '@/components/ui/use-toast';
 import { getAtomicAmount } from '@/program/utils';
-import { UPDATE_POOL_FROM_TXN } from '@/graphql/mutations';
-import { UpdatePoolFromTxnMutation, Pool } from '@/graphql/__generated__/graphql';
+import { RECORD_TRADE } from '@/graphql/mutations';
+import { RecordTradeMutation, Pool, Token } from '@/graphql/__generated__/graphql';
 import { useMutation } from '@apollo/client';
 import { useTransaction } from '@/hooks/useTransaction';
 
 type Props = {
-  pool: Pool;
+  pool?: Pool | null;
   tokenBalance?: number | null;
   onSubmit?: () => void;
   disabled?: boolean;
@@ -33,12 +33,12 @@ type Props = {
 
 const SellTokensForm = ({
   closeDialog,
-  pool,
+  token,
   tokenBalance,
   onSubmit: onSubmitProp,
 }: {
   closeDialog: () => void;
-  pool: Props['pool'];
+  token?: Token | null;
   tokenBalance: Props['tokenBalance'];
   onSubmit: Props['onSubmit'];
 }) => {
@@ -47,7 +47,7 @@ const SellTokensForm = ({
   const anchorWallet = useAnchorWallet();
   const { sendTransaction } = useWallet();
   const { showTransactionToast } = useTransaction();
-  const [updatePoolFromTxn] = useMutation<UpdatePoolFromTxnMutation>(UPDATE_POOL_FROM_TXN);
+  const [updatePoolFromTxn] = useMutation<RecordTradeMutation>(RECORD_TRADE);
 
   const sellTokensFormSchema = z.object({
     amount: z
@@ -69,12 +69,18 @@ const SellTokensForm = ({
       alert('Wallet not connected');
       return;
     }
+    if (!token) {
+      console.error('Token not found');
+      window.alert('Token not found');
+      return;
+    }
+
     try {
       const atomicAmount = getAtomicAmount(amount);
-      const transaction = await sellTokensTxn({
+      const transaction = await makeSellTokenTxn({
         connection,
         wallet: anchorWallet,
-        poolId: pool.id,
+        symbol: token?.symbol || '',
         amount: atomicAmount,
       });
       const signature = await sendTransaction(transaction, connection);
@@ -84,7 +90,7 @@ const SellTokensForm = ({
       console.log('sending to server...');
       updatePoolFromTxn({
         variables: {
-          txn: signature,
+          transaction: signature,
         },
       });
       await showTransactionToast(signature);
@@ -101,6 +107,10 @@ const SellTokensForm = ({
     }
   };
 
+  if (!token) {
+    return <p className="text-center">Token not found</p>;
+  }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -112,7 +122,7 @@ const SellTokensForm = ({
               <div className="pb-[7px]">
                 <FormLabel>Amount</FormLabel>
                 <FormDescription className="text-gray-400 text-xs">
-                  How much ${pool.token.symbol} do you want to sell?
+                  How much ${token.symbol} do you want to sell?
                 </FormDescription>
               </div>
               <FormControl>
@@ -155,7 +165,7 @@ const SellTokensForm = ({
                     value={field.value || ''}
                   />
                   <p className="text-gray-300 text-xs pt-1">
-                    You have {tokenBalance} {pool.token.symbol}
+                    You have {tokenBalance} {token.symbol}
                   </p>
                 </>
               </FormControl>
@@ -183,6 +193,10 @@ const DialogForm = ({ pool, tokenBalance, onSubmit, disabled }: Props) => {
     setIsOpen(isOpen);
   };
 
+  if (!pool) {
+    return <p className="text-center">Pool not found</p>;
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={handleFormOpen}>
       <Button
@@ -202,10 +216,10 @@ const DialogForm = ({ pool, tokenBalance, onSubmit, disabled }: Props) => {
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle>Sell {pool.token.name}</DialogTitle>
+              <DialogTitle>Sell {pool?.token?.name}</DialogTitle>
             </DialogHeader>
             <SellTokensForm
-              pool={pool}
+              token={pool?.token}
               tokenBalance={tokenBalance}
               closeDialog={() => setIsOpen(false)}
               onSubmit={onSubmit}

@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/memetik.json`.
  */
 export type Memetik = {
-  "address": "AQWyAazxs3Dz6vJVBAb5wKu4pN9scWqVansE7g2gyKGg",
+  "address": "14a3y3QApSRvxd8kgG9S4FTjQFeTQ92XpUxTvXkTrknR",
   "metadata": {
     "name": "memetik",
     "version": "0.1.0",
@@ -47,7 +47,7 @@ export type Memetik = {
               },
               {
                 "kind": "arg",
-                "path": "poolId"
+                "path": "ticker"
               }
             ]
           }
@@ -68,7 +68,7 @@ export type Memetik = {
               },
               {
                 "kind": "arg",
-                "path": "poolId"
+                "path": "ticker"
               }
             ]
           }
@@ -76,31 +76,6 @@ export type Memetik = {
         {
           "name": "buyerTokenAccount",
           "writable": true
-        },
-        {
-          "name": "globalState",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  103,
-                  108,
-                  111,
-                  98,
-                  97,
-                  108,
-                  45,
-                  115,
-                  116,
-                  97,
-                  116,
-                  101
-                ]
-              }
-            ]
-          }
         },
         {
           "name": "tokenProgram",
@@ -117,12 +92,137 @@ export type Memetik = {
       ],
       "args": [
         {
-          "name": "poolId",
-          "type": "u64"
+          "name": "ticker",
+          "type": "string"
         },
         {
           "name": "amount",
           "type": "u64"
+        }
+      ],
+      "returns": {
+        "defined": {
+          "name": "pool"
+        }
+      }
+    },
+    {
+      "name": "close",
+      "discriminator": [
+        98,
+        165,
+        201,
+        177,
+        108,
+        65,
+        206,
+        96
+      ],
+      "accounts": [
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "ticker"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108,
+                  45,
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "ticker"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "ticker",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "getPool",
+      "discriminator": [
+        147,
+        6,
+        31,
+        180,
+        183,
+        38,
+        216,
+        153
+      ],
+      "accounts": [
+        {
+          "name": "pool",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "ticker"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "ticker",
+          "type": "string"
         }
       ],
       "returns": {
@@ -165,7 +265,35 @@ export type Memetik = {
               },
               {
                 "kind": "arg",
-                "path": "poolId"
+                "path": "token_info.symbol"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  111,
+                  111,
+                  108,
+                  45,
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "token_info.symbol"
               }
             ]
           }
@@ -190,32 +318,7 @@ export type Memetik = {
               },
               {
                 "kind": "arg",
-                "path": "poolId"
-              }
-            ]
-          }
-        },
-        {
-          "name": "globalState",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  103,
-                  108,
-                  111,
-                  98,
-                  97,
-                  108,
-                  45,
-                  115,
-                  116,
-                  97,
-                  116,
-                  101
-                ]
+                "path": "token_info.symbol"
               }
             ]
           }
@@ -238,10 +341,6 @@ export type Memetik = {
         }
       ],
       "args": [
-        {
-          "name": "poolId",
-          "type": "u64"
-        },
         {
           "name": "tokenInfo",
           "type": {
@@ -291,7 +390,7 @@ export type Memetik = {
               },
               {
                 "kind": "arg",
-                "path": "poolId"
+                "path": "ticker"
               }
             ]
           }
@@ -312,7 +411,7 @@ export type Memetik = {
               },
               {
                 "kind": "arg",
-                "path": "poolId"
+                "path": "ticker"
               }
             ]
           }
@@ -320,31 +419,6 @@ export type Memetik = {
         {
           "name": "sellerTokenAccount",
           "writable": true
-        },
-        {
-          "name": "globalState",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  103,
-                  108,
-                  111,
-                  98,
-                  97,
-                  108,
-                  45,
-                  115,
-                  116,
-                  97,
-                  116,
-                  101
-                ]
-              }
-            ]
-          }
         },
         {
           "name": "tokenProgram",
@@ -361,8 +435,8 @@ export type Memetik = {
       ],
       "args": [
         {
-          "name": "poolId",
-          "type": "u64"
+          "name": "ticker",
+          "type": "string"
         },
         {
           "name": "amount",
@@ -378,19 +452,6 @@ export type Memetik = {
   ],
   "accounts": [
     {
-      "name": "globalState",
-      "discriminator": [
-        163,
-        46,
-        74,
-        168,
-        216,
-        123,
-        133,
-        98
-      ]
-    },
-    {
       "name": "pool",
       "discriminator": [
         241,
@@ -402,66 +463,82 @@ export type Memetik = {
         109,
         188
       ]
+    },
+    {
+      "name": "poolEscrow",
+      "discriminator": [
+        120,
+        42,
+        206,
+        247,
+        95,
+        97,
+        187,
+        113
+      ]
     }
   ],
   "errors": [
     {
       "code": 6000,
-      "name": "incorrectMintAccount",
-      "msg": "Incorrect mint account provided"
+      "name": "invalidPoolTicker",
+      "msg": "Invalid pool ticker"
     },
     {
       "code": 6001,
-      "name": "incorrectPoolId",
-      "msg": "Incorrect pool id"
+      "name": "notPoolCreator",
+      "msg": "Not pool creator"
     },
     {
       "code": 6002,
+      "name": "notEscrowOwner",
+      "msg": "Not escrow owner"
+    },
+    {
+      "code": 6003,
+      "name": "invalidEscrowAccount",
+      "msg": "Invalid escrow account"
+    },
+    {
+      "code": 6004,
+      "name": "insufficientFundsInEscrow",
+      "msg": "Insufficient funds in escrow"
+    },
+    {
+      "code": 6005,
+      "name": "poolNotMatured",
+      "msg": "Pool has not matured"
+    },
+    {
+      "code": 6006,
       "name": "noTokensToSell",
       "msg": "No tokens to sell"
     },
     {
-      "code": 6003,
+      "code": 6007,
       "name": "mustBuyAtLeastOneToken",
       "msg": "Must buy at least one token"
     },
     {
-      "code": 6004,
-      "name": "overflow",
-      "msg": "overflow"
-    },
-    {
-      "code": 6005,
+      "code": 6008,
       "name": "poolInsufficientFunds",
       "msg": "Pool has insufficient funds"
     },
     {
-      "code": 6006,
-      "name": "invalidPoolId",
-      "msg": "Invalid pool id"
+      "code": 6009,
+      "name": "invalidTickerFormat",
+      "msg": "Invalid ticker format"
     }
   ],
   "types": [
-    {
-      "name": "globalState",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "poolsCreated",
-            "type": "u64"
-          }
-        ]
-      }
-    },
     {
       "name": "pool",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "id",
-            "type": "u64"
+            "name": "ticker",
+            "type": "string"
           },
           {
             "name": "tokPrice",
@@ -470,6 +547,42 @@ export type Memetik = {
           {
             "name": "mint",
             "type": "pubkey"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "maturityTime",
+            "type": "i64"
+          },
+          {
+            "name": "hasMatured",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "poolEscrow",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "balance",
+            "type": "u64"
           }
         ]
       }

@@ -1,18 +1,18 @@
 import { gql } from '@apollo/client';
-import { POOL, COMMENT } from './fragments';
+import { POOL, COMMENT, USER } from './fragments';
 
-export const CREATE_POOL_FROM_TXN = gql`
-  mutation createPoolFromTxn($txn: String!) {
-    createPoolFromTxn(txn: $txn) {
+export const CREATE_POOL = gql`
+  mutation createPool($transaction: String!) {
+    createPool(transaction: $transaction) {
       ...Pool
     }
   }
   ${POOL}
 `;
 
-export const UPDATE_POOL_FROM_TXN = gql`
-  mutation updatePoolFromTxn($txn: String!) {
-    updatePoolFromTxn(txn: $txn) {
+export const RECORD_TRADE = gql`
+  mutation recordTrade($transaction: String!) {
+    recordTrade(transaction: $transaction) {
       ...Pool
     }
   }
@@ -26,4 +26,13 @@ export const ADD_COMMENT = gql`
     }
   }
   ${COMMENT}
+`;
+
+export const AUTHENTICATE = gql`
+  mutation authenticate {
+    authenticate {
+      ...User
+    }
+  }
+  ${USER}
 `;
