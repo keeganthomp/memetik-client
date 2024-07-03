@@ -45,6 +45,13 @@ export const getProgram = (args: ProgramInteractionArgs): Program => {
   return anchorProgram;
 };
 
+export const getMintPDA = (ticker: string) => {
+  const MINT_SEED_CONSTANT = 'pool_mint';
+  const seeds = [Buffer.from(MINT_SEED_CONSTANT), Buffer.from(ticker)];
+  const [mintPDA] = anchor.web3.PublicKey.findProgramAddressSync(seeds, programId);
+  return mintPDA;
+};
+
 export const getMetadataPDA = (mint: anchor.web3.PublicKey) => {
   const METADATA_SEED_CONSTANT = 'metadata';
   const [metadataAddress] = anchor.web3.PublicKey.findProgramAddressSync(
@@ -54,25 +61,25 @@ export const getMetadataPDA = (mint: anchor.web3.PublicKey) => {
   return metadataAddress;
 };
 
-export const getMintPDA = (ticker: string) => {
-  const MINT_SEED_CONSTANT = 'mint';
-  const seeds = [Buffer.from(MINT_SEED_CONSTANT), Buffer.from(ticker)];
-  const [mintPDA] = anchor.web3.PublicKey.findProgramAddressSync(seeds, programId);
-  return mintPDA;
-};
-
-export const getPoolPDA = (ticker: string) => {
-  const POOL_SEED_CONSTANT = 'pool';
-  const seeds = [Buffer.from(POOL_SEED_CONSTANT), Buffer.from(ticker)];
+export const getBondingPoolPDA = (ticker: string) => {
+  const POOL_BONDING_SEED_CONSTANT = 'pool';
+  const seeds = [Buffer.from(POOL_BONDING_SEED_CONSTANT), Buffer.from(ticker)];
   const [poolPDA] = anchor.web3.PublicKey.findProgramAddressSync(seeds, programId);
   return poolPDA;
 };
 
-export const getEscrowPDA = (ticker: string) => {
-  const ESCROW_SEED_CONSTANT = 'pool-escrow';
-  const seeds = [Buffer.from(ESCROW_SEED_CONSTANT), Buffer.from(ticker)];
-  const [escrowPDA] = anchor.web3.PublicKey.findProgramAddressSync(seeds, programId);
-  return escrowPDA;
+export const getAmmPoolPDA = (ticker: string) => {
+  const POOL_AMM_SEED_CONSTANT = 'pool_amm';
+  const seeds = [Buffer.from(POOL_AMM_SEED_CONSTANT), Buffer.from(ticker)];
+  const [poolPDA] = anchor.web3.PublicKey.findProgramAddressSync(seeds, programId);
+  return poolPDA;
+};
+
+export const getPoolLPMint = async (ticker: string) => {
+  const POOL_LP_MINT_SEED_CONSTANT = 'pool_lp_mint';
+  const seeds = [Buffer.from(POOL_LP_MINT_SEED_CONSTANT), Buffer.from(ticker)];
+  const [poolLPMint] = anchor.web3.PublicKey.findProgramAddressSync(seeds, programId);
+  return poolLPMint;
 };
 
 export const getTokBalance = async ({

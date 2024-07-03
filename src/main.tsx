@@ -8,7 +8,6 @@ import apolloClient from './lib/apolloClient';
 import { SocketProvider } from './context/SocketContext';
 import { TransactionProvider } from './context/TransactionContext';
 import { Toaster } from '@/components/ui/toaster';
-import './lib/raydium'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

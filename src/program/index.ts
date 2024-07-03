@@ -1,5 +1,7 @@
 import * as anchor from '@coral-xyz/anchor';
 import { ProgramInteractionArgs, getProgram, getMetadataPDA, getMintPDA } from './utils';
+import { PythSolanaReceiver } from '@pythnetwork/pyth-solana-receiver';
+import NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
 
 type CreatePoolArgs = ProgramInteractionArgs & {
   token: {
@@ -14,13 +16,25 @@ type TokenTransactionArgs = ProgramInteractionArgs & {
   amount: number;
 };
 
+const SOL_PRICE_FEED_ID = '0xef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d';
+
+const priceFeedKP = anchor.web3.Keypair.generate();
+export const getPriceFeedAccount = (args: ProgramInteractionArgs) => {
+  const priceFeedWallet = new NodeWallet(priceFeedKP);
+  const pythSolanaReceiver = new PythSolanaReceiver({
+    connection: args.connection,
+    wallet: priceFeedWallet,
+  });
+  return pythSolanaReceiver.getPriceFeedAccountAddress(0, SOL_PRICE_FEED_ID);
+};
+
 export const makeCreatePoolTxn = async (args: CreatePoolArgs) => {
   const program = getProgram(args);
   const mint = getMintPDA(args.token.symbol);
   const metadataPDA = getMetadataPDA(mint);
   const creator = args.wallet.publicKey;
   const transaction = await program.methods
-    .initialize(args.token)
+    .initializePool(args.token.symbol, args.token.name, args.token.uri)
     .accounts({
       signer: creator,
       metadata: metadataPDA,
@@ -34,17 +48,13 @@ export const makeCreatePoolTxn = async (args: CreatePoolArgs) => {
 
 export const makeBuyTokenTxn = async (args: TokenTransactionArgs) => {
   const program = getProgram(args);
-  const mintPDA = getMintPDA(args.symbol);
+  const priceFeedAccount = getPriceFeedAccount(args);
   const buyer = args.wallet.publicKey;
-  const buyerTokenAccount = await anchor.utils.token.associatedAddress({
-    mint: mintPDA,
-    owner: buyer,
-  });
   const transaction = await program.methods
     .buy(args.symbol, new anchor.BN(args.amount))
     .accounts({
       buyer: buyer,
-      buyerTokenAccount,
+      priceUpdate: priceFeedAccount,
     })
     .transaction();
   const latestBlock = await args.connection.getLatestBlockhash();
@@ -55,17 +65,11 @@ export const makeBuyTokenTxn = async (args: TokenTransactionArgs) => {
 
 export const makeSellTokenTxn = async (args: TokenTransactionArgs) => {
   const program = getProgram(args);
-  const mintPDA = getMintPDA(args.symbol);
   const seller = args.wallet.publicKey;
-  const sellerTokenAccount = await anchor.utils.token.associatedAddress({
-    mint: mintPDA,
-    owner: seller,
-  });
   const transaction = await program.methods
     .sell(args.symbol, new anchor.BN(args.amount))
     .accounts({
       seller,
-      sellerTokenAccount,
     })
     .transaction();
   const latestBlock = await args.connection.getLatestBlockhash();
