@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { POOL, COMMENT, USER } from './fragments';
+import { POOL, COMMENT, USER, TRADE } from './fragments';
 
 export const CREATE_POOL = gql`
   mutation createPool($transaction: String!) {
@@ -13,15 +13,15 @@ export const CREATE_POOL = gql`
 export const RECORD_TRADE = gql`
   mutation recordTrade($transaction: String!) {
     recordTrade(transaction: $transaction) {
-      ...Pool
+      ...Trade
     }
   }
-  ${POOL}
+  ${TRADE}
 `;
 
 export const ADD_COMMENT = gql`
-  mutation addComment($poolId: Int!, $text: String!, $creator: String!) {
-    addComment(poolId: $poolId, text: $text, creator: $creator) {
+  mutation addComment($ticker: String!, $text: String!, $creator: String!) {
+    addComment(ticker: $ticker, text: $text, creator: $creator) {
       ...Comment
     }
   }

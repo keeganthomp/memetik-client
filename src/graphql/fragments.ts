@@ -7,13 +7,12 @@ export const TOKEN = gql`
     updatedAt
     name
     symbol
-    uri
-    decimals
-    supply
-    contractAddress
-    latestPurchasePrice
-    image
     description
+    image
+    decimals
+    uri
+    contractAddress
+    holders
   }
 `;
 
@@ -34,8 +33,9 @@ export const POOL = gql`
     createdAt
     updatedAt
     creator
-    contractAddress
     maturityTime
+    contractAddress
+    ticker
     token {
       ...Token
     }

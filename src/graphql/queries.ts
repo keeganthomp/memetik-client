@@ -28,8 +28,8 @@ export const GET_TOKEN_META_PRESIGNED_URL = gql`
 `;
 
 export const GET_POOL = gql`
-  query getPool($symbol: String, $contractAddress: String) {
-    getPool(symbol: $symbol, contractAddress: $contractAddress) {
+  query getPool($ticker: String!) {
+    getPool(ticker: $ticker) {
       ...Pool
       token {
         ...Token
@@ -42,8 +42,8 @@ export const GET_POOL = gql`
 `;
 
 export const GET_TOKEN = gql`
-  query getToken($contractAddress: String!) {
-    getToken(contractAddress: $contractAddress) {
+  query getToken($ticker: String!) {
+    getToken(ticker: $ticker) {
       ...Token
     }
   }
@@ -60,8 +60,8 @@ export const GET_PROFILE = gql`
 `;
 
 export const GET_TRADES = gql`
-  query getTrades($symbol: String!) {
-    getTrades(symbol: $symbol) {
+  query getTrades($ticker: String!) {
+    getTrades(ticker: $ticker) {
       trades {
         ...Trade
       }
